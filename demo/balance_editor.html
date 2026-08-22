@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Survivor — 밸런스 조정기</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#141a2e; --panel2:#1b2238; --line:#283150;
+    --ink:#e8edf7; --sub:#90a0c8; --cyan:#2fe0ff; --gold:#ffcf3a; --red:#ff5a5a; --green:#5ce05c; --purple:#b96cff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  header{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,#0e1530,#0b1020);
+    border-bottom:1px solid var(--line);padding:13px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  header h1{font-size:17px;margin:0;color:var(--cyan)}
+  .pill{font-size:12px;font-weight:700;padding:4px 11px;border-radius:20px;border:1px solid var(--line)}
+  .pill.on{color:var(--green);border-color:#235034;background:#0e2014}
+  .pill.off{color:var(--sub);background:#141b30}
+  .btn{background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:9px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:700}
+  .btn:hover{border-color:var(--cyan)}
+  .btn.primary{background:#0f3a52;border-color:var(--cyan);color:#bff4ff}
+  .chk{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--sub);font-weight:700;cursor:pointer}
+  .help-top{margin:0;padding:10px 20px;background:#10182e;border-bottom:1px solid var(--line);color:var(--sub);font-size:12.5px}
+  .help-top b{color:var(--gold)}
+  .help-top .step{display:inline-block;background:#1b2238;border:1px solid var(--line);border-radius:20px;padding:2px 10px;margin-right:5px;color:var(--ink);font-weight:700}
+  /* tabs */
+  .tabs{display:flex;gap:6px;padding:12px 18px 0;flex-wrap:wrap;background:#0b1020;position:sticky;top:55px;z-index:9}
+  .tabs button{background:var(--panel);border:1px solid var(--line);border-bottom:none;color:var(--sub);
+    padding:11px 18px;border-radius:11px 11px 0 0;cursor:pointer;font-size:14px;font-weight:800}
+  .tabs button.active{background:var(--panel2);color:var(--cyan);border-color:var(--cyan)}
+  .panel{display:none;padding:16px 18px}
+  .panel.active{display:block}
+  .pwrap{display:grid;grid-template-columns:minmax(340px,460px) 1fr;gap:18px;align-items:start}
+  @media(max-width:920px){.pwrap{grid-template-columns:1fr}}
+  .col{display:flex;flex-direction:column;gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden}
+  .card h2{margin:0;padding:12px 16px;font-size:14px;color:var(--ink);background:var(--panel2);border-bottom:1px solid var(--line)}
+  .card h2 small{color:var(--sub);font-weight:400;font-size:12px;margin-left:6px}
+  .sec{border-top:1px solid var(--line)}
+  .sec:first-child{border-top:none}
+  .sech{padding:11px 16px;font-weight:800;color:var(--cyan);font-size:13px}
+  .sech span{color:var(--sub);font-weight:400;font-size:12px}
+  .row{padding:7px 16px;border-top:1px solid #1a2138}
+  .row .nm{font-weight:700;font-size:13px}
+  .row .hp{color:var(--sub);font-size:11.5px;margin-top:1px}
+  .row .val{display:flex;align-items:center;gap:8px;margin-top:5px}
+  .row input[type=number]{width:78px;background:#0c1224;border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:5px 7px;font-size:13px;font-weight:700;text-align:right}
+  .row input[type=range]{flex:1;accent-color:var(--cyan);height:22px}
+  .selrow{display:flex;align-items:center;gap:10px;padding:12px 16px}
+  .selrow span{color:var(--sub);font-size:12.5px;font-weight:700}
+  .selrow select{flex:1;background:#0c1224;border:1px solid var(--cyan);color:var(--ink);border-radius:8px;padding:9px 11px;font-size:14px;font-weight:700;cursor:pointer}
+  .grp{margin:8px 12px;border:1px solid var(--line);border-radius:10px;background:#0e1428;overflow:hidden}
+  .grp .gh{font-weight:800;color:var(--gold);font-size:12.5px;padding:8px 12px;background:#141b30;border-bottom:1px solid var(--line)}
+  canvas{width:100%;display:block;background:#0c1224;border-radius:9px}
+  .cap{color:var(--sub);font-size:12px;padding:2px 16px 12px}
+  .cap b{color:var(--ink)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--sub);padding:8px 16px 2px}
+  .legend i{display:inline-block;width:11px;height:4px;border-radius:2px;margin-right:5px;vertical-align:middle}
+  .warns{display:flex;flex-direction:column;gap:8px}
+  .warn{padding:10px 12px;border-radius:9px;font-size:13px;border:1px solid;display:flex;gap:8px;align-items:flex-start}
+  .warn.ok{color:var(--green);border-color:#235034;background:#0e2014}
+  .warn.bad{color:var(--red);border-color:#5e2424;background:#241010}
+  .warn.note{color:var(--gold);border-color:#5e4d1c;background:#241d0a}
+  .assume{display:grid;grid-template-columns:1fr 86px;gap:10px;align-items:center;padding:5px 16px}
+  .assume label{color:var(--sub);font-size:12.5px}
+  .assume input{background:#0c1224;border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:5px 7px;font-size:13px;text-align:right}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0f3a52;border:1px solid var(--cyan);color:#bff4ff;padding:11px 18px;border-radius:10px;font-weight:700;opacity:0;transition:opacity .3s;pointer-events:none;z-index:50}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <h1>🛠 밸런스 조정기</h1>
+  <span class="pill off" id="mode">⚪ 파일 모드</span>
+  <span style="flex:1"></span>
+  <label class="chk" id="autoWrap" style="display:none"><input type="checkbox" id="auto" checked> 게임에 자동 적용</label>
+  <button class="btn primary" id="apply" style="display:none">🎮 게임에 적용</button>
+  <input type="file" id="file" accept=".json" style="display:none">
+  <button class="btn" id="load" onclick="document.getElementById('file').click()">📂 불러오기</button>
+  <button class="btn" id="dl">💾 저장</button>
+  <button class="btn" id="reset">↺ 처음값</button>
+</header>
+<p class="help-top" id="helpFile">
+  <span class="step">1</span>위 탭으로 종류를 고르고 값을 바꾸면 <b>오른쪽 그래프가 즉시</b> 바뀝니다.
+  <span class="step">2</span><b>💾 저장</b> → 받은 <code>balance.json</code> 을 게임의 <b>Assets/Resources/Data/</b> 에 덮어쓰면 반영.
+  <span class="step">💡</span>게임에 <b>실시간 반영</b>하려면 터미널에서 <code>node "tools/balance_server.js"</code> 실행 후 <code>http://localhost:7777</code> 로 여세요.
+</p>
+<p class="help-top" id="helpLive" style="display:none">
+  <span class="step">🎮</span><b>게임 연결됨.</b> 값을 바꾸면 게임 <code>balance.json</code> 에 <b>바로 기록</b>됩니다 — Unity 가 <b>Play 중</b>이면 1초 안에 반영(새로 생성되는 적·다음 판부터 확실히 적용).
+  <span class="step">🧪</span>오른쪽 그래프 = <b>즉석 시뮬레이터</b>. 게임에서도 보려면 적용 후 Unity 에서 판을 시작/재시작.
+</p>
+
+<div class="tabs" id="tabs">
+  <button data-tab="ship" class="active">🚀 함선</button>
+  <button data-tab="enemy">👾 적 &amp; 스폰</button>
+  <button data-tab="econ">💰 경제</button>
+  <button data-tab="weapon">🔫 보조무기</button>
+  <button data-tab="planet">🪐 행성</button>
+</div>
+
+<!-- 함선 -->
+<div class="panel active" data-panel="ship"><div class="pwrap">
+  <div class="col"><div class="card"><h2>함선 능력치 <small>· 드롭다운으로 한 척 선택</small></h2><div id="ed_ship"></div></div></div>
+  <div class="col">
+    <div class="card"><h2>🧪 함선 균형 점검</h2><div style="padding:12px 16px"><div class="warns" id="warnShip"></div></div></div>
+    <div class="card"><h2>함선이 주는 피해(DPS)</h2>
+      <div class="legend"><span><i style="background:#2fe0ff"></i>막대 높을수록 초당 피해 큼</span></div>
+      <div style="padding:8px 16px 4px"><canvas id="cDps" height="230"></canvas></div>
+      <div class="cap">역할마다 피해는 원래 다릅니다(탱커↓·글래스캐넌↑). <b>같은 등급끼리 너무 벌어지면</b> 위에서 경고.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- 적 & 스폰 -->
+<div class="panel" data-panel="enemy"><div class="pwrap">
+  <div class="col"><div class="card"><h2>적 능력치 · 스폰 · 스테이지</h2><div id="ed_enemy"></div></div></div>
+  <div class="col">
+    <div class="card"><h2>🧪 난이도 점검</h2><div style="padding:12px 16px"><div class="warns" id="warnEnemy"></div></div></div>
+    <div class="card"><h2>시간이 지날수록 적이 단단해지는 정도</h2>
+      <div class="legend"><span><i style="background:#90a0c8"></i>기본</span><span><i style="background:#5ce05c"></i>잡몹</span><span><i style="background:#ffcf3a"></i>거대</span><span><i style="background:#b96cff"></i>정예</span></div>
+      <div style="padding:8px 16px 4px"><canvas id="cHp" height="230"></canvas></div>
+      <div class="assume"><label>난이도(행성×스테이지)</label><input type="number" id="hpDiff" value="1.0" step="0.1" min="0.2"></div>
+      <div class="cap">오른쪽일수록(시간 경과) 적 체력 ↑. 한 스테이지에서 <b>3배 넘게</b> 단단해지면 경고.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- 경제 -->
+<div class="panel" data-panel="econ"><div class="pwrap">
+  <div class="col"><div class="card"><h2>성장 속도 (코인 · 경험치)</h2><div id="ed_econ"></div></div></div>
+  <div class="col">
+    <div class="card"><h2>🧪 성장 속도 점검</h2><div style="padding:12px 16px"><div class="warns" id="warnEcon"></div></div></div>
+    <div class="card"><h2>돈 모으는 속도</h2>
+      <div class="legend"><span><i style="background:#ffcf3a"></i>모은 코인(누적)</span><span><i style="background:#ff5a5a"></i>능력 하나 풀강 비용</span></div>
+      <div style="padding:8px 16px 4px"><canvas id="cEco" height="230"></canvas></div>
+      <div class="assume"><label>한 판당 처치 수</label><input type="number" id="ecoKills" value="600" step="50"></div>
+      <div class="assume"><label>처치 1마리당 코인</label><input type="number" id="ecoCpk" value="1" step="1"></div>
+      <div class="assume"><label>하루에 하는 판 수</label><input type="number" id="ecoRuns" value="12" step="1"></div>
+      <div class="assume"><label>풀강할 능력</label><input type="text" id="ecoKey" value="damage"></div>
+      <div class="assume"><label>풀강 목표 레벨</label><input type="number" id="ecoCap" value="10" step="1"></div>
+      <div class="cap">금색이 빨강(풀강 비용)에 닿는 <b>시안 세로선 = 며칠</b>. 목표 1~4일.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- 보조무기 -->
+<div class="panel" data-panel="weapon"><div class="pwrap">
+  <div class="col"><div class="card"><h2>보조 무기 <small>· 레벨업으로 얻는 자동 무기(고급)</small></h2><div id="ed_weapon"></div></div></div>
+  <div class="col"><div class="card"><h2>도움말</h2><div class="cap" style="padding:14px 16px">폭탄·유도탄·드론·궤도칼날·차지랜스의 쿨다운/피해 계수입니다. <b>쿨다운(초)</b>이 작을수록 자주, <b>피해 배수</b>가 클수록 세게 나갑니다. 값을 바꾸면 게임에 바로 적용돼요(연결 모드).</div></div></div>
+</div></div>
+
+<!-- 행성 -->
+<div class="panel" data-panel="planet"><div class="pwrap">
+  <div class="col"><div class="card"><h2>행성별 난이도 &amp; 보상</h2><div id="ed_planet"></div></div></div>
+  <div class="col"><div class="card"><h2>도움말</h2><div class="cap" style="padding:14px 16px"><b>난이도</b>는 그 행성의 적 전체를 더 세게, <b>처치당 코인</b>은 그 행성에서 버는 돈을 정합니다. 뒤 행성일수록 둘 다 높게 두는 게 보통이에요.</div></div></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== 기본값 (게임 balance.json 의 처음값) =====
+const DEFAULTS = {
+  spawn:{baseHpConst:3,baseHpTimeDiv:200,baseHpDiffScale:10,baseSpeedConst:0.8,baseSpeedTimeSlope:0.004,baseSpeedDiffMax:1.25,maxAlive:120,spawnTickBase:0.18,bossMidHpMul:22,bossFinalHpMul:160},
+  duel:{enabled:true,swarmMaxAlive:34,swarmTickMul:1.2,patternCap:3,patternPerStage:0.5,patternChance:0.18,patternScale:1.25,hpMul:3,xpMul:4,contactDmgMul:1.35,surgeScale:1,strafeWeight:0.9,flipMin:0.5,flipMax:1.4,dashEveryMin:2.5,dashEveryMax:5.5,dashRange:7,dashWindup:0.6,dashSpeed:8.5,dashTime:0.35,dashRecover:0.6,holdDist:6,fireInterval:2.4,windupSlope:0.03,fireSlope:0.12,ramWindup:0.9,ramSpeed:10,ramTime:0.5,ringCount:8,burstShots:3,burstGap:0.22},
+  growth:{shipLvMax:10,shipStatPerLv:0.02,shipCoinBase:500,shipCoinGrowth:1.3,shipShardBase:2,shipShardSlope:1,skillLvMax:15,skillPowerPerLv:0.04,skillCoinBase:800,skillCoinGrowth:1.35,researchGemBase:12,researchGemGrowth:1.06},
+  rhythm:{surgeFirstAt:45,surgeIntervalMin:55,surgeIntervalMax:80,surgeTelegraph:2.5,surgeCountBase:14,surgeCountPerMin:8,surgeCountMax:40,surgeIntensityMul:1.6,surgeDuration:12,lullIntensityMul:0.5,lullDuration:8,midbossAtFrac:0.55},
+  stage:{surviveBase:180,surviveSlope:25,diffBase:0.42,diffSlope:0.1},
+  enemies:[
+    {kind:"Swarm",hpMul:0.7,speedMul:0.9,dmgMul:0.6,xp:1,coin:0},
+    {kind:"Mid",hpMul:1.6,speedMul:0.72,dmgMul:1.0,xp:1,coin:0},
+    {kind:"Brute",hpMul:6.0,speedMul:0.42,dmgMul:1.8,xp:4,coin:1},
+    {kind:"Elite",hpMul:4.0,speedMul:0.8,dmgMul:1.3,xp:5,coin:1},
+    {kind:"Special",hpMul:3.0,speedMul:0.5,dmgMul:1.0,xp:3,coin:1},
+    {kind:"Boss",hpMul:1.0,speedMul:0.4,dmgMul:2.2,xp:25,coin:10}
+  ],
+  planets:[
+    {name:"테라 행성",difficulty:1.0,coinPerKill:1},
+    {name:"화염 행성",difficulty:1.5,coinPerKill:2},
+    {name:"암흑 성운",difficulty:2.2,coinPerKill:3}
+  ],
+  ships:[
+    {name:"Scout",maxHP:100,moveSpeed:5.1,defense:0.0,damage:1,fireInterval:0.13,bulletCount:1,bulletSpeed:22,range:5.0,pierce:0},
+    {name:"Gunner",maxHP:130,moveSpeed:4.7,defense:0.10,damage:1,fireInterval:0.18,bulletCount:3,bulletSpeed:20,range:4.0,pierce:0},
+    {name:"Lancer",maxHP:160,moveSpeed:4.3,defense:0.20,damage:3,fireInterval:0.25,bulletCount:1,bulletSpeed:18,range:6.0,pierce:2},
+    {name:"Guardian",maxHP:200,moveSpeed:4.1,defense:0.25,damage:1,fireInterval:0.22,bulletCount:1,bulletSpeed:18,range:3.5,pierce:0},
+    {name:"Nova",maxHP:150,moveSpeed:4.5,defense:0.12,damage:2,fireInterval:0.20,bulletCount:2,bulletSpeed:19,range:4.5,pierce:0},
+    {name:"Phantom",maxHP:110,moveSpeed:5.6,defense:0.05,damage:2,fireInterval:0.11,bulletCount:1,bulletSpeed:24,range:5.0,pierce:0}
+  ],
+  weapons:{bombCdBase:3.5,bombCdSlope:0.4,bombCdMin:1.2,bombCdEvoBase:2.4,bombCdEvoMin:0.7,bombDmgMul:3,bombDmgSlope:5,bombEvoDmgMul:1.5,
+    homingCdBase:2.2,homingCdSlope:0.28,homingCdMin:0.45,homingCdEvoBase:1.2,homingCdEvoMin:0.28,
+    droneCdBase:0.9,droneCdSlope:0.1,droneCdMin:0.25,droneCdEvoBase:0.55,droneCdEvoMin:0.12,
+    orbitalRadiusBase:1.6,orbitalRadiusSlope:0.18,orbitalRadiusEvoBonus:0.8,lanceMultMin:1.6,lanceMultMax:8.0},
+  economy:{gemRewardFirstClear:5,researchBase:150,researchGrowth:1.02,enhanceBase:350,enhanceGrowth:1.16,promoteBase:1500,promoteGrowth:1.55,clearBonusBase:250,clearBonusSlope:35,clearRepeatFrac:0.5,firstClearShards:3,rouletteShardChance:0.10,bossShardChance:0.30,bossShardCount:3,legendaryChance:0.05,xpToNextInit:160,xpCurveMul:1.20,xpCurveAdd:12,
+    upgradeCosts:[
+      {key:"speed",baseCost:50},{key:"accel",baseCost:60},{key:"damage",baseCost:60},{key:"firerate",baseCost:60},
+      {key:"range",baseCost:50},{key:"pierce",baseCost:90},{key:"multishot",baseCost:120},{key:"hp",baseCost:60},
+      {key:"defense",baseCost:60},{key:"regen",baseCost:80},{key:"crit",baseCost:80},{key:"skillpow",baseCost:80}]}
+};
+
+// ===== 친절한 한글 라벨: f[key]=[이름, 설명, min, max, step] =====
+const META = {
+  spawn:{t:"적 강함 & 등장 수",d:"적이 얼마나 세고 몇 마리 나오는지",f:{
+    baseHpConst:["적 기본 체력","판 시작 시 적 체력의 바탕값",0,10,0.5],
+    baseHpTimeDiv:["체력 증가 느림 정도","클수록 시간이 지나도 천천히 단단해짐",20,500,10],
+    baseHpDiffScale:["적 체력 전체 배율","적 체력 전체에 곱하는 값",1,30,1],
+    baseSpeedConst:["적 기본 속도","적이 기본적으로 움직이는 빠르기",0.2,3,0.1],
+    baseSpeedTimeSlope:["적 속도 증가율","시간이 지날수록 빨라지는 정도",0,0.02,0.001],
+    baseSpeedDiffMax:["어려운 행성 속도 보너스","어려운 행성에서 적이 최대 얼마나 빠른지",1,2,0.05],
+    maxAlive:["동시 등장 최대 적 수","화면에 한 번에 나오는 적 한도",20,300,10],
+    spawnTickBase:["적 생성 간격(초)","작을수록 더 자주 쏟아짐",0.05,1,0.02],
+    bossMidHpMul:["중간보스 체력 배수","기본 적 대비 몇 배 단단한지",5,100,1],
+    bossFinalHpMul:["최종보스 체력 배수","기본 적 대비 몇 배 단단한지",20,400,5]}},
+  duel:{t:"하이브리드 결투 모드",d:"기본 몹=물때(패턴 없음) + 패턴 몹 소수(동시 상한). 다이얼 = 물때 밀도/패턴 동시 수/변이 확률 (행성1 전체)",f:{
+    patternPerStage:["스테이지당 패턴 가산","상위 스테이지에서 패턴 몹 동시 수 증가",0,3,0.5],
+    windupSlope:["스테이지당 신호 단축(초)","상위로 갈수록 돌진 신호가 짧아짐",0,0.1,0.01],
+    fireSlope:["스테이지당 발사 단축(초)","상위로 갈수록 자주 쏨",0,0.5,0.02],
+    ramWindup:["램 신호(초)","브루트 돌진 텔레그래프",0.4,2,0.1],
+    ramSpeed:["램 속도","브루트 돌진 속도",5,18,0.5],
+    ramTime:["램 지속(초)","브루트 돌진 시간",0.2,1.2,0.05],
+    ringCount:["원형탄 수","램 착지 시 방출 탄 수",4,16,1],
+    burstShots:["연발 수","엘리트 버스트 탄 수",2,6,1],
+    burstGap:["연발 간격(초)","엘리트 버스트 탄 간격",0.1,0.6,0.02],
+    enabled:["실험 켜기","끄면 기존 스웜으로 복귀 (1=켬, 0=끔)",0,1,1],
+    swarmMaxAlive:["물때 밀도","기본 몹 포함 전체 동시 수",10,80,2],
+    patternCap:["패턴 몹 동시 상한","한 번에 등장하는 패턴 몹 수",1,10,1],
+    patternChance:["패턴 변이 확률","스웜/미드가 패턴 몹으로 나올 확률",0,1,0.02],
+    patternScale:["패턴 몹 크기 배수","식별용 확대",1,2,0.05],
+    swarmTickMul:["물때 스폰 간격 배수","클수록 드물게 나옴",0.5,4,0.1],
+    hpMul:["패턴 몹 체력 배수","기본 몹은 원래 체력 유지",1,6,0.1],
+    xpMul:["패턴 몹 경험치 배수","기본 몹은 원래 경험치",1,10,0.5],
+    contactDmgMul:["패턴 몹 접촉 피해 배수","돌진에 맞으면 아프게",1,3,0.05],
+    surgeScale:["서지 물량 배율","1=물때 그대로 쏟아짐",0.1,1.5,0.05],
+    strafeWeight:["좌우 기동 비중","클수록 옆으로 많이 움직임",0,2,0.1],
+    flipMin:["방향 전환 최소(초)","좌우 반전 간격",0.2,3,0.1],
+    flipMax:["방향 전환 최대(초)","좌우 반전 간격",0.3,4,0.1],
+    dashEveryMin:["돌진 주기 최소(초)","추격자 돌진 간격",1,10,0.5],
+    dashEveryMax:["돌진 주기 최대(초)","추격자 돌진 간격",2,15,0.5],
+    dashRange:["돌진 사거리","이 거리 안에서만 돌진 시도",3,12,0.5],
+    dashWindup:["돌진 신호(초)","웅크림 텔레그래프 길이",0.2,2,0.1],
+    dashSpeed:["돌진 속도","직선 돌진 속도",4,16,0.5],
+    dashTime:["돌진 지속(초)","직선 이동 시간",0.15,1,0.05],
+    dashRecover:["돌진 회복(초)","돌진 후 무력 시간 = 반격 찬스",0.2,2,0.1],
+    holdDist:["사수 유지 거리","미드가 밀당하는 거리",3,10,0.5],
+    fireInterval:["사수 발사 간격(초)","조준탄 주기",0.8,6,0.2]}},
+  growth:{t:"성장 4계",d:"함선 레벨 + 코어스킬(마일스톤 Lv5/10) + 잼 연구 지정 + 코어 데이터 드랍",f:{
+    shipLvMax:["함선 최대 레벨","함선별 레벨 상한",1,20,1],
+    shipStatPerLv:["함선 레벨당 스탯","기본 스탯 배수 가산",0,0.1,0.005],
+    shipCoinBase:["함선 강화 시작가","코인",100,3000,50],
+    shipCoinGrowth:["함선 강화 성장","레벨당 곱",1,2,0.05],
+    shipShardBase:["함선 강화 조각 기본","조각",0,10,1],
+    shipShardSlope:["함선 강화 조각 증가","레벨당 가산",0,5,1],
+    skillLvMax:["코어스킬 최대 레벨","함선별 상한",5,30,1],
+    skillPowerPerLv:["스킬 레벨당 위력","복리 배수",0,0.1,0.005],
+    skillCoinBase:["스킬 강화 시작가","코인",100,3000,50],
+    skillCoinGrowth:["스킬 강화 성장","레벨당 곱",1,2,0.05],
+    researchGemBase:["지정 연구 시작가","잼",1,100,1],
+    researchGemGrowth:["지정 연구 성장","분야 레벨당 곱",1,1.5,0.01]}},
+  rhythm:{t:"전투 리듬",d:"웨이브 서지(경고 후 대군), 미드보스, 이완 구간",f:{
+    surgeFirstAt:["첫 서지 시각(초)","교전 시작 후 첫 대군까지",10,180,5],
+    surgeIntervalMin:["서지 간격 최소(초)","다음 대군까지 최소 대기",20,180,5],
+    surgeIntervalMax:["서지 간격 최대(초)","다음 대군까지 최대 대기",20,240,5],
+    surgeTelegraph:["경고 시간(초)","대군 돌입 전 경고 표시",1,6,0.5],
+    surgeCountBase:["서지 기본 물량","대군 기본 마리 수",4,60,2],
+    surgeCountPerMin:["분당 물량 가산","경과 1분마다 추가되는 마리 수",0,30,1],
+    surgeCountMax:["서지 물량 상한","대군 최대 마리 수",10,120,5],
+    surgeIntensityMul:["서지 중 밀도 배수","서지 12초 동안 스폰 가속",1,3,0.1],
+    surgeDuration:["서지 지속(초)","밀도 가속이 유지되는 시간",4,30,1],
+    lullIntensityMul:["이완 밀도 배수","피크 직후 스폰 감속",0.1,1,0.05],
+    lullDuration:["이완 지속(초)","숨 고르는 골의 길이",3,20,1],
+    midbossAtFrac:["미드보스 지점","생존시간 대비 등장 비율",0.3,0.9,0.05]}},
+  stage:{t:"스테이지 난이도",d:"스테이지가 오를수록 길고 어려워지는 곡선",f:{
+    surviveBase:["1스테이지 생존시간(초)","첫 스테이지에서 버티는 시간",60,400,10],
+    surviveSlope:["스테이지당 시간 증가(초)","스테이지마다 늘어나는 시간",0,120,5],
+    diffBase:["1스테이지 난이도","첫 스테이지 난이도",0.2,2,0.1],
+    diffSlope:["스테이지당 난이도 증가","스테이지마다 더 어려워지는 정도",0,0.5,0.05]}},
+  enemies:{t:"적 종류별 능력치",d:"각 적이 기본 대비 얼마나 세고 얼마를 주는지",
+    kindKo:{Swarm:"잡몹",Mid:"중형",Brute:"거대",Elite:"정예",Special:"원거리",Boss:"보스"},
+    f:{hpMul:["체력 배수","기본 적 대비 체력",0,10,0.1],speedMul:["속도 배수","기본 적 대비 빠르기",0,2,0.05],
+      dmgMul:["공격력 배수","기본 적 대비 공격력",0,5,0.1],xp:["경험치","처치 시 경험치",0,50,1],coin:["코인","처치 시 코인",0,30,1]}},
+  planets:{t:"행성별 난이도 & 보상",d:"행성마다 난이도·코인이 다름",
+    f:{difficulty:["난이도","이 행성 전체 난이도 배수",0.5,4,0.1],coinPerKill:["처치당 코인","적 1마리당 코인",1,10,1]}},
+  ships:{t:"함선 능력치",d:"각 함선 전투 스탯",
+    f:{maxHP:["체력","함선 최대 체력",50,400,5],moveSpeed:["이동속도","움직이는 빠르기",2,8,0.1],
+      defense:["방어(0~1)","받는 피해 감소(0.25=25%↓)",0,0.9,0.05],damage:["공격력","총알 한 발 피해",1,10,1],
+      fireInterval:["발사 간격(초)","작을수록 빨리 쏨",0.05,0.5,0.01],bulletCount:["한 번에 쏘는 발 수","동시 총알 수",1,6,1],
+      bulletSpeed:["총알 속도","날아가는 빠르기",10,30,1],range:["사거리","총알 닿는 거리",2,8,0.5],pierce:["관통","적 몇 명 뚫는지",0,5,1]}},
+  weapons:{t:"보조 무기",d:"레벨업으로 얻는 자동 무기(고급)",f:{
+    bombCdBase:["폭탄 쿨다운(초)","폭탄 재사용 시간",0.5,6,0.1],bombCdSlope:["폭탄 쿨다운 감소/레벨","레벨업마다 줄어듦",0,1,0.05],
+    bombCdMin:["폭탄 최소 쿨다운","이 밑으론 안 내려감",0.2,3,0.1],bombCdEvoBase:["폭탄(진화) 쿨다운","진화 후",0.3,5,0.1],
+    bombCdEvoMin:["폭탄(진화) 최소 쿨다운","",0.2,2,0.05],bombDmgMul:["폭탄 피해 배수","공격력 대비 폭탄 피해",1,8,0.5],
+    bombDmgSlope:["폭탄 피해 증가/레벨","",0,15,1],bombEvoDmgMul:["폭탄(진화) 피해 배수","",1,3,0.1],
+    homingCdBase:["유도탄 쿨다운","",0.3,4,0.1],homingCdSlope:["유도탄 쿨다운 감소/레벨","",0,1,0.02],
+    homingCdMin:["유도탄 최소 쿨다운","",0.2,2,0.05],homingCdEvoBase:["유도탄(진화) 쿨다운","",0.3,3,0.1],homingCdEvoMin:["유도탄(진화) 최소","",0.1,1,0.02],
+    droneCdBase:["드론 발사 쿨다운","",0.2,2,0.05],droneCdSlope:["드론 쿨다운 감소/레벨","",0,0.5,0.02],droneCdMin:["드론 최소 쿨다운","",0.1,1,0.02],
+    droneCdEvoBase:["드론(진화) 쿨다운","",0.2,1.5,0.05],droneCdEvoMin:["드론(진화) 최소","",0.05,0.5,0.02],
+    orbitalRadiusBase:["궤도 칼날 반경","칼날 도는 거리",0.5,4,0.1],orbitalRadiusSlope:["궤도 반경 증가/레벨","",0,0.5,0.02],
+    orbitalRadiusEvoBonus:["궤도(진화) 반경 보너스","",0,2,0.1],lanceMultMin:["차지랜스 최소 배수","살짝 모았을 때",1,4,0.1],
+    lanceMultMax:["차지랜스 최대 배수","끝까지 모았을 때",2,15,0.5]}},
+  economy:{t:"성장 속도 (코인·경험치)",d:"돈 모으는 속도와 레벨업 곡선",
+    upgradeKo:{speed:"추진력",accel:"가속",damage:"화력",firerate:"연사",range:"사거리",pierce:"관통",multishot:"다연장",hp:"장갑",defense:"방어",regen:"재생",crit:"정밀",skillpow:"출력"},
+    f:{gemRewardFirstClear:["첫 클리어 보석","스테이지 첫 클리어 보석",0,50,1],
+    clearBonusBase:["클리어 보너스 기본","스테이지 클리어 시 지급 코인(행성 배수 적용)",0,1000,10],
+    clearBonusSlope:["클리어 보너스 증가","스테이지당 가산",0,200,5],
+    clearRepeatFrac:["반복 클리어 배율","이미 깬 스테이지 재클리어 시 비율",0,1,0.05],
+    firstClearShards:["첫 클리어 조각","스테이지 첫 클리어 함선 조각",0,10,1],
+    researchBase:["연구 시작가","연구 룰 첫 비용",50,1000,10],
+    researchGrowth:["연구 비용 성장","총 레벨당 곱해지는 비율",1.0,1.3,0.005],
+    enhanceBase:["강화 시작가","장비 강화 첫 비용",100,2000,10],
+    enhanceGrowth:["강화 비용 성장","부위 파워당 곱해지는 비율",1.0,1.4,0.01],
+    promoteBase:["승급 시작가","장비 승급 첫 비용",500,5000,50],
+    promoteGrowth:["승급 비용 성장","등급당 곱해지는 비율",1.0,2.5,0.05],
+    rouletteShardChance:["일반 룰렛 조각 확률","보물상자 룰렛에서 조각",0,0.5,0.01],
+    bossShardChance:["보스 룰렛 조각 확률","골든 상자 룰렛에서 조각",0,0.8,0.02],
+    bossShardCount:["보스 룰렛 조각 수","당첨 시 개수",1,10,1],
+    legendaryChance:["레전더리 확률","고급 상자 잭팟 (승급 도달 불가, 상자 전용)",0,0.3,0.01],
+      xpToNextInit:["첫 레벨업 경험치","레벨 1→2 필요 경험치",50,400,10],
+      xpCurveMul:["레벨업 경험치 증가율(×)","레벨마다 몇 배씩 느는지",1,2,0.05],
+      xpCurveAdd:["레벨업 경험치 추가(+)","레벨마다 추가로 붙는 경험치",0,50,1]}}
+};
+
+let model = clone(DEFAULTS);
+let selShip = 0;
+let SERVED = location.protocol === "http:" || location.protocol === "https:";   // 서버로 열렸나(연동 가능)
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function fmeta(sec,key){return (META[sec]&&META[sec].f&&META[sec].f[key])||null;}
+
+// ===== 폼 생성 (섹션 단위) =====
+function rowHTML(sec,key,path,val){
+  const m=fmeta(sec,key), nm=m?m[0]:key, hp=m?m[1]:"";
+  const mn=m?m[2]:0, mx=Math.max(m?m[3]:Math.max(1,Math.abs(val)*3), val), st=m?m[4]:(Math.abs(val)<1?0.01:1);
+  const id=path.replace(/[^\w]/g,"_");
+  return `<div class="row"><div class="nm">${nm}</div>`+(hp?`<div class="hp">${hp}</div>`:``)+
+    `<div class="val"><input type="range" id="r_${id}" data-path="${path}" value="${val}" min="${mn}" max="${mx}" step="${st}">`+
+    `<input type="number" id="n_${id}" data-path="${path}" value="${val}" step="${st}"></div></div>`;
+}
+function sectionHTML(sec){
+  const sv=model[sec], mt=META[sec]||{};
+  let h=`<div class="sec"><div class="sech">${mt.t||sec} <span>— ${mt.d||""}</span></div>`;
+  if(sec==="ships"){
+    h+=`<div class="selrow"><span>편집할 함선</span><select id="shipSel">`+
+       model.ships.map((s,i)=>`<option value="${i}"${i===selShip?" selected":""}>${s.name} (${GRADE[s.name]||""})</option>`).join("")+
+       `</select></div><div id="shipFields"></div>`;
+  } else if(sec==="economy"){
+    for(const k of Object.keys(sv)){
+      if(k==="upgradeCosts"){
+        h+=`<div class="grp"><div class="gh">능력별 강화 기본 비용 (코인)</div>`;
+        sv[k].forEach((u,i)=>{const ko=(mt.upgradeKo&&mt.upgradeKo[u.key])||u.key,id=`economy.upgradeCosts.${i}.baseCost`.replace(/[^\w]/g,"_"),v=u.baseCost,mx=Math.max(300,v);
+          h+=`<div class="row"><div class="nm">${ko}</div><div class="hp">1레벨 올릴 때 코인의 바탕값</div>`+
+             `<div class="val"><input type="range" id="r_${id}" data-path="economy.upgradeCosts.${i}.baseCost" value="${v}" min="0" max="${mx}" step="5">`+
+             `<input type="number" id="n_${id}" data-path="economy.upgradeCosts.${i}.baseCost" value="${v}" step="5"></div></div>`;});
+        h+=`</div>`;
+      } else h+=rowHTML(sec,k,`${sec}.${k}`,sv[k]);
+    }
+  } else if(Array.isArray(sv)){
+    sv.forEach((item,i)=>{let title=item.kind||item.name||("#"+i); if(sec==="enemies"&&mt.kindKo)title=mt.kindKo[item.kind]||title;
+      h+=`<div class="grp"><div class="gh">${title}</div>`;
+      for(const k of Object.keys(item)){if(k==="kind"||k==="name")continue;h+=rowHTML(sec,k,`${sec}.${i}.${k}`,item[k]);}
+      h+=`</div>`;});
+  } else {
+    for(const k of Object.keys(sv)) h+=rowHTML(sec,k,`${sec}.${k}`,sv[k]);
+  }
+  return h+`</div>`;
+}
+function fill(id,html){const el=document.getElementById(id);el.innerHTML=html;el.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",onInput));}
+function buildForm(){
+  fill("ed_ship",sectionHTML("ships"));
+  fill("ed_enemy",sectionHTML("enemies")+sectionHTML("spawn")+sectionHTML("stage")+sectionHTML("rhythm")+sectionHTML("duel")+sectionHTML("growth"));
+  fill("ed_econ",sectionHTML("economy"));
+  fill("ed_weapon",sectionHTML("weapons"));
+  fill("ed_planet",sectionHTML("planets"));
+  const sel=document.getElementById("shipSel");
+  if(sel){sel.addEventListener("change",e=>{selShip=+e.target.value;renderShipFields();});renderShipFields();}
+}
+function renderShipFields(){
+  const box=document.getElementById("shipFields"); if(!box)return;
+  const i=selShip,item=model.ships[i];
+  let h=`<div class="grp"><div class="gh">${item.name} (${GRADE[item.name]||""})</div>`;
+  for(const k of Object.keys(item)){if(k==="name")continue;h+=rowHTML("ships",k,`ships.${i}.${k}`,item[k]);}
+  box.innerHTML=h+`</div>`;
+  box.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",onInput));
+}
+function setPath(path,val){const p=path.split(".");let o=model;for(let i=0;i<p.length-1;i++)o=Array.isArray(o)?o[+p[i]]:o[p[i]];o[p[p.length-1]]=val;}
+function onInput(e){
+  const path=e.target.dataset.path; let val=parseFloat(e.target.value);
+  if(!Number.isFinite(val)){refresh();return;}
+  setPath(path,val);
+  const id=path.replace(/[^\w]/g,"_"),n=document.getElementById("n_"+id),r=document.getElementById("r_"+id);
+  if(n&&n!==e.target)n.value=val;
+  if(r&&r!==e.target){if(val>+r.max)r.max=val;if(val<+r.min)r.min=val;r.value=val;}
+  refresh(); scheduleApply();
+}
+
+// ===== 계산 =====
+function num(v,d){return Number.isFinite(v)?v:(d||0);}
+function shipDps(s){return num(s.damage)*num(s.bulletCount)/Math.max(0.01,num(s.fireInterval,0.2));}
+const GRADE={Scout:"하급",Gunner:"중급",Lancer:"상급",Guardian:"중급",Nova:"상급",Phantom:"상급"};
+const BAND={"하급":1.0,"중급":1.15,"상급":1.30,"프리미엄":1.45};
+function shipPower(s){return shipDps(s)*(1+num(s.defense))*(num(s.maxHP,100)/100);}
+function shipNorm(s){return shipPower(s)/(BAND[GRADE[s.name]]||1);}
+function baseHp(t,diff){const s=model.spawn;return (num(s.baseHpConst)+t/Math.max(1,num(s.baseHpTimeDiv,200)))*diff*num(s.baseHpDiffScale,1);}
+function enemy(k){return model.enemies.find(e=>e.kind===k)||{hpMul:1};}
+function upCost(k){const u=model.economy.upgradeCosts.find(x=>x.key===k);return u?num(u.baseCost):60;}
+function inval(id,d){const v=parseFloat(document.getElementById(id).value);return Number.isFinite(v)?v:d;}
+
+// ===== 캔버스 =====
+function ctxOf(id,H){const c=document.getElementById(id),dpr=window.devicePixelRatio||1,w=Math.max(60,c.clientWidth||460);
+  c.style.height=H+"px";c.width=Math.round(w*dpr);c.height=Math.round(H*dpr);const x=c.getContext("2d");x.setTransform(dpr,0,0,dpr,0,0);return{x,w,h:H};}
+function axes(x,w,h,p){x.strokeStyle="#283150";x.lineWidth=1;x.beginPath();x.moveTo(p,8);x.lineTo(p,h-p);x.lineTo(w-8,h-p);x.stroke();}
+function line(x,pts,c){x.strokeStyle=c;x.lineWidth=2.2;x.beginPath();pts.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.stroke();}
+function txt(x,s,px,py,c,a){x.fillStyle=c||"#90a0c8";x.font="11px sans-serif";x.textAlign=a||"left";x.fillText(s,px,py);}
+function drawDps(){const{x,w,h}=ctxOf("cDps",230),pad=30;axes(x,w,h,pad);
+  const ships=model.ships,dps=ships.map(shipDps),mx=Math.max(...dps,1),bw=(w-pad-16)/ships.length;
+  ships.forEach((s,i)=>{const d=dps[i],bh=(h-pad-16)*(d/mx),px=pad+8+i*bw,py=h-pad-bh;
+    x.fillStyle="#2fe0ff";x.fillRect(px,py,bw-10,Math.max(0,bh));
+    txt(x,d.toFixed(0),px+(bw-10)/2,py-4,"#e8edf7","center");
+    txt(x,s.name,px+(bw-10)/2,h-pad+13,"#90a0c8","center");txt(x,GRADE[s.name]||"",px+(bw-10)/2,h-pad+25,"#5a6a92","center");});}
+function drawHp(){const{x,w,h}=ctxOf("cHp",230),pad=36;axes(x,w,h,pad);
+  const diff=inval("hpDiff",1),tMax=Math.max(60,num(model.stage.surviveBase,150)+8*num(model.stage.surviveSlope,30));
+  const ser=[["기본",1,"#90a0c8"],["잡몹",num(enemy("Swarm").hpMul,1),"#5ce05c"],["거대",num(enemy("Brute").hpMul,1),"#ffcf3a"],["정예",num(enemy("Elite").hpMul,1),"#b96cff"]];
+  let mx=1;for(let t=0;t<=tMax;t+=tMax/40)mx=Math.max(mx,baseHp(t,diff)*num(enemy("Brute").hpMul,1));
+  ser.forEach(([nm,mul,c])=>{const pts=[];for(let t=0;t<=tMax;t+=tMax/60)pts.push([pad+(w-pad-8)*(t/tMax),(h-pad)-(h-pad-10)*(baseHp(t,diff)*mul/mx)]);line(x,pts,c);});
+  txt(x,"체력",pad+2,12);txt(x,Math.round(mx),pad-4,16,"#90a0c8","right");txt(x,"0초",pad,h-pad+13);txt(x,(tMax/60).toFixed(1)+"분",w-8,h-pad+13,"#90a0c8","right");}
+function drawEco(){const{x,w,h}=ctxOf("cEco",230),pad=40;axes(x,w,h,pad);
+  const kills=inval("ecoKills",0),cpk=inval("ecoCpk",1),runs=inval("ecoRuns",1),key=document.getElementById("ecoKey").value.trim(),cap=Math.max(1,inval("ecoCap",10));
+  const perDay=kills*cpk*runs,bc=upCost(key);let target=0;for(let l=0;l<cap;l++)target+=bc*(l+1);
+  const days=14,mxY=Math.max(perDay*days,target,1)*1.05,pts=[];
+  for(let d=0;d<=days;d++)pts.push([pad+(w-pad-8)*(d/days),(h-pad)-(h-pad-10)*(perDay*d/mxY)]);line(x,pts,"#ffcf3a");
+  const ty=(h-pad)-(h-pad-10)*(target/mxY);x.strokeStyle="#ff5a5a";x.setLineDash([5,3]);x.beginPath();x.moveTo(pad,ty);x.lineTo(w-8,ty);x.stroke();x.setLineDash([]);
+  txt(x,key+" 풀강 "+Math.round(target).toLocaleString()+"코인",w-10,ty-4,"#ff5a5a","right");
+  const cross=perDay>0?target/perDay:Infinity;
+  if(isFinite(cross)&&cross<=days){const cx=pad+(w-pad-8)*(cross/days);x.strokeStyle="#2fe0ff";x.lineWidth=1.5;x.beginPath();x.moveTo(cx,8);x.lineTo(cx,h-pad);x.stroke();txt(x,"약 "+cross.toFixed(1)+"일",cx+4,20,"#2fe0ff");}
+  txt(x,"0일",pad,h-pad+13);txt(x,days+"일",w-8,h-pad+13,"#90a0c8","right");return{cross};}
+function warnHTML(arr){return arr.map(([c,m])=>`<div class="warn ${c}"><span>${c==="ok"?"✅":c==="bad"?"⛔":"💡"}</span><span>${m}</span></div>`).join("");}
+function validate(eco){
+  const norm=model.ships.map(shipNorm),base=Math.min(...norm),mx=Math.max(...norm),Ws=[];
+  if(base>0&&mx>base*1.45){const w=model.ships[norm.indexOf(mx)].name;Ws.push(["bad",`${w}(${GRADE[w]}) 함선이 등급 기준보다 너무 셉니다 — 같은 등급끼리 ×1.45 안에 들어야 균형이 맞아요.`]);}
+  else Ws.push(["ok",`함선 균형 좋음 — 가장 센/약한 함선 차이 ${base>0?(mx/base).toFixed(2):"–"}배 (1.45배 이내).`]);
+  document.getElementById("warnShip").innerHTML=warnHTML(Ws);
+  const diff=inval("hpDiff",1),surv=num(model.stage.surviveBase,150)+8*num(model.stage.surviveSlope,30),infl=baseHp(surv,diff)/Math.max(0.01,baseHp(0,diff)),We=[];
+  if(infl>3)We.push(["bad",`적이 한 스테이지에서 ${infl.toFixed(1)}배나 단단해집니다 — 너무 가팔라요(3배 권장). '체력 증가 느림 정도'를 키워보세요.`]);
+  else We.push(["ok",`적 단단해지는 속도 적당 — 한 스테이지에서 ${infl.toFixed(2)}배 (3배 이내).`]);
+  document.getElementById("warnEnemy").innerHTML=warnHTML(We);
+  const Wc=[],bad=model.economy.upgradeCosts.filter(u=>num(u.baseCost)<=0);
+  if(bad.length)Wc.push(["bad",`강화 비용이 0 이하인 능력: ${bad.map(b=>(META.economy.upgradeKo[b.key]||b.key)).join(", ")} — 공짜가 됩니다.`]);
+  if(eco&&isFinite(eco.cross)){if(eco.cross<0.5)Wc.push(["note",`능력 하나 풀강이 ${eco.cross.toFixed(1)}일밖에 안 걸려요 — 너무 빨라 모으는 재미가 약할 수 있어요.`]);
+    else if(eco.cross>5)Wc.push(["note",`능력 하나 풀강에 ${eco.cross.toFixed(1)}일 — 다소 깁니다(목표 1~4일).`]);
+    else Wc.push(["ok",`성장 속도 좋음 — 능력 하나 풀강 약 ${eco.cross.toFixed(1)}일 (목표 1~4일).`]);}
+  document.getElementById("warnEcon").innerHTML=warnHTML(Wc);
+}
+function safe(fn){try{return fn();}catch(e){console.warn("skip:",e.message);return null;}}
+function refresh(){safe(drawDps);safe(drawHp);const eco=safe(drawEco);safe(()=>validate(eco));}
+
+// ===== 탭 =====
+document.getElementById("tabs").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("active",x===b));
+  document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.dataset.panel===b.dataset.tab));
+  refresh();   // 보이게 된 뒤 그려야 캔버스 폭이 맞음
+});
+
+// ===== 게임 연동(서버 모드) =====
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200);}
+let applyTimer=null;
+function scheduleApply(){ if(!SERVED||!document.getElementById("auto").checked)return; clearTimeout(applyTimer); applyTimer=setTimeout(applyToGame,400); }
+function applyToGame(){
+  if(!SERVED){toast("⚠️ 파일 모드 — 게임 연동하려면 node tools/balance_server.js 로 여세요");return;}
+  fetch("/api/balance",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(model,null,2)})
+    .then(r=>r.ok?toast("🎮 게임에 적용됨"):r.text().then(t=>toast("⛔ 적용 실패: "+t)))
+    .catch(e=>toast("⛔ 서버 연결 끊김: "+e.message));
+}
+function loadFromGame(){
+  return fetch("/api/balance").then(r=>r.json()).then(j=>{model=clone(DEFAULTS);deepMerge(model,j);buildForm();refresh();})
+    .catch(e=>toast("⛔ 게임 값 불러오기 실패: "+e.message));
+}
+
+// ===== 입출력(파일 모드) =====
+document.getElementById("apply").onclick=applyToGame;
+document.getElementById("dl").onclick=()=>{const b=new Blob([JSON.stringify(model,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="balance.json";a.click();toast("💾 balance.json 저장됨");};
+document.getElementById("reset").onclick=()=>{model=clone(DEFAULTS);buildForm();refresh();scheduleApply();toast("↺ 처음값");};
+document.getElementById("file").onchange=ev=>{const fr=new FileReader();fr.onload=()=>{try{model=clone(DEFAULTS);deepMerge(model,JSON.parse(fr.result));buildForm();refresh();toast("📂 불러왔어요");}catch(e){toast("⛔ JSON 못 읽음: "+e.message);}};fr.readAsText(ev.target.files[0]);};
+function deepMerge(d,s){for(const k in s){if(Array.isArray(s[k]))d[k]=s[k];else if(s[k]&&typeof s[k]==="object"){if(!d[k])d[k]={};deepMerge(d[k],s[k]);}else if(k[0]!=="_")d[k]=s[k];}}
+["hpDiff","ecoKills","ecoCpk","ecoRuns","ecoKey","ecoCap"].forEach(id=>document.getElementById(id).addEventListener("input",refresh));
+
+// ===== 시작 =====
+function boot(){
+  if(SERVED){
+    document.getElementById("mode").className="pill on";document.getElementById("mode").textContent="🟢 게임 연결됨";
+    document.getElementById("apply").style.display="";document.getElementById("autoWrap").style.display="";
+    document.getElementById("dl").style.display="";   // 저장(파일)도 그대로 둠
+    document.getElementById("helpFile").style.display="none";document.getElementById("helpLive").style.display="";
+    loadFromGame();   // 실제 현재 게임값으로 시작
+  } else { buildForm(); refresh(); }
+}
+boot();
+</script>
+</body>
+</html>

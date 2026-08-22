@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>신민구 포트폴리오 — 게임 클라이언트 개발자</title>
+<meta name="description" content="신민구 포트폴리오. Unity로 모바일 게임을 만듭니다. 지구특공대, 우주라이크.">
+<meta property="og:title" content="신민구 포트폴리오 — 게임 클라이언트 개발자">
+<meta property="og:description" content="1인 개발 모바일 로그라이크 생존 게임 지구특공대, 대학가 제휴 앱 우주라이크.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tlsalsrn1217.github.io/">
+<meta property="og:image" content="https://tlsalsrn1217.github.io/media/og_cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" as="style" crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<!-- ?v= 는 캐시 무효화용. style.css나 app.js를 고치면 이 숫자를 올린다.
+     파일명이 그대로면 브라우저가 옛 파일을 계속 쓴다. -->
+<link rel="stylesheet" href="style.css?v=64">
+<!-- 진입 애니메이션은 JS가 살아 있을 때만 건다. 이게 없으면 app.js가 실패했을 때
+     .reveal이 opacity:0 그대로 굳어서 본문 대부분이 영영 안 보인다. -->
+<script>document.documentElement.classList.add("js");</script>
+</head>
+<body>
+
+<div class="topbar">
+  <nav class="toc" aria-label="목차">
+    <a href="#about">About Me</a>
+    <a href="#career">Experience</a>
+    <a href="#strengths">What I Do Best</a>
+    <a href="#projects">Projects</a>
+    <a href="#tools">Tools I Built</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <!-- 읽은 양 표시. 값은 app.js가 넣는다 -->
+  <div class="scroll-bar" aria-hidden="true"><span></span></div>
+</div>
+
+<!-- 히어로 -->
+<header class="hero dark">
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <h1>신민구 포트폴리오</h1>
+      <p class="hero-sub">아이디어를 빠르게 플레이 가능한 형태로 만들고, 직접 검증하며 발전시키는 게임 클라이언트 개발자입니다.</p>
+      <p class="hero-meta">Unity, C#, 1인 개발 모바일 게임, 출시 앱 1종</p>
+    </div>
+    <div class="hero-shot">
+      <img src="media/profile.webp" alt="신민구" width="540" height="720" fetchpriority="high">
+    </div>
+  </div>
+
+</header>
+
+
+<!-- 소개 -->
+<section class="section" id="about">
+  <div class="wrap">
+    <h2 class="reveal">About Me</h2>
+
+    <div class="card reveal">
+      <p class="lead">아이디어를 빠르게 플레이 가능한 형태로 만들고, 직접 검증하며 발전시키는 게임 클라이언트 개발자입니다.</p>
+      <p>게임을 만드는 것이 너무 좋아서 취미로 개발을 시작했고, Unity와 C#을 독학하며 직접 게임을 기획하고 개발하고 있습니다. 좋은 아이디어가 떠오르면 오래 고민하기보다 최대한 빠르게 프로토타입을 만들고, 플레이와 피드백을 통해 핵심 재미를 검증하는 방식을 선호합니다.</p>
+      <p>Claude Code, ChatGPT, PixelLab, ElevenLabs 등 다양한 AI 도구를 개발 과정에 활용하며 기획, 개발, UI 디자인, 게임 에셋 제작까지 직접 수행해본 경험을 가지고 있습니다.</p>
+      <p>현재 메인 프로젝트로 모바일 로그라이크 생존 게임 「지구특공대」를 1인 개발 중이며, <b>2026년 9월 출시</b>를 목표로 하고 있습니다.</p>
+
+      <h3 class="stack-head">기술 스택</h3>
+      <dl class="stack reveal stagger">
+        <div>
+          <dt>게임 개발</dt>
+          <dd><span class="chip">Unity</span><span class="chip">C#</span><span class="chip">C++</span></dd>
+        </div>
+        <div>
+          <dt>앱 개발</dt>
+          <dd><span class="chip">Flutter</span><span class="chip">Dart</span><span class="chip">Firebase</span><span class="chip">REST API</span></dd>
+        </div>
+        <div>
+          <dt>AI 도구</dt>
+          <dd><span class="chip">Claude Code</span><span class="chip">ChatGPT</span><span class="chip">Gemini</span><span class="chip">PixelLab</span><span class="chip">ElevenLabs</span></dd>
+        </div>
+        <div>
+          <dt>디자인</dt>
+          <dd><span class="chip">Figma</span></dd>
+        </div>
+        <div>
+          <dt>협업과 문서</dt>
+          <dd><span class="chip">GitHub</span><span class="chip">Notion</span><span class="chip">Excel</span><span class="chip">Word</span><span class="chip">PowerPoint</span></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- 경력 -->
+<section class="section" id="career">
+  <div class="wrap">
+    <h2 class="reveal">Experience</h2>
+    <ol class="career reveal stagger">
+      <li><span class="career-when">2021~</span><span class="career-what">경북대학교 물리학과 재학, 2027년 2월 졸업 예정</span></li>
+      <li><span class="career-when">2024~</span><span class="career-what">학생 창업팀 코끼리 초기 멤버</span></li>
+      <li><span class="career-when">2024~</span><span class="career-what">대학가 제휴 앱 <a class="link-inline" href="#wouldulike">「우주라이크」</a> 서비스 기획, UX와 UI 디자인, 프론트엔드 개발 참여</span></li>
+      <li><span class="career-when">2024</span><span class="career-what">경북대학교 물리학과 학생회 임원</span></li>
+      <li><span class="career-when">2025</span><span class="career-what">경북대학교 중앙동아리 미담장학회 임원</span></li>
+      <li><span class="career-when">2026~</span><span class="career-what">모바일 게임 <a class="link-inline" href="#project">「지구특공대」</a> 1인 개발</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 강점 -->
+<section class="section" id="strengths">
+  <div class="wrap wrap-wide">
+    <h2 class="reveal">What I Do Best</h2>
+    <ul class="strengths reveal stagger">
+      <li>
+        <span class="str-icon"><img src="media/i3d_idea.webp" alt="" width="256" height="256" loading="lazy"></span>
+        <h3>빠른 실행력</h3>
+        <p>앱을 만들어보고 싶다는 생각 하나로 친구 2명과 대학가 식당 제휴 앱 「우주라이크」를 개발하여 재학생 다운로드 1,000회 이상을 기록했습니다.</p>
+        <p>아이디어가 생기면 빠르게 주요 기능이 구현된 프로토타입을 만들고 핵심 가치를 검증하는 것을 중요하게 생각합니다. 완벽하게 준비한 뒤 시작하기보다 빠르게 만들고, 테스트하고, 피드백을 받으며 수정하는 편입니다.</p>
+        <a href="#wouldulike">우주라이크 보기</a>
+      </li>
+      <li>
+        <span class="str-icon"><img src="media/i3d_sparkles.webp" alt="" width="256" height="256" loading="lazy"></span>
+        <h3>AI 활용 능력</h3>
+        <p>Claude Code, ChatGPT, PixelLab, ElevenLabs 등 다양한 AI 도구를 필요에 따라 적절히 활용합니다. AI가 잘하는 것과 못하는 것을 확실히 이해하고, 만든 결과물을 그대로 사용하는 것이 아니라 기획 의도에 맞게 판단하고 수정하며 생산성을 높이는 도구로 활용합니다.</p>
+        <p>게임 개발을 할 때 밸런스 대시보드, UI 편집기 등 개발에 필요한 툴은 AI agent를 활용해 개발하고 활용합니다.</p>
+        <a href="#tools">개발 방식 보기</a>
+      </li>
+      <li>
+        <span class="str-icon"><img src="media/i3d_openbook.webp" alt="" width="256" height="256" loading="lazy"></span>
+        <h3>주도적 학습과 성장</h3>
+        <p>비전공자로 개발을 시작해 Unity, C#, GitHub, Figma 등을 독학하고 프로젝트를 진행하며 익혔습니다. 새로운 기술이 필요하면 열정을 가지고 직접 찾아 배우는 편입니다.</p>
+        <p>업무에 필요한 새로운 도구나 기술 스택이 있다면 시간을 투자해서 배우는데 주저하지 않고 성장하는 즐거움을 느낍니다.</p>
+        <a href="#project">지구특공대 보기</a>
+      </li>
+      <li>
+        <span class="str-icon"><img src="media/i3d_handshake.webp" alt="" width="256" height="256" loading="lazy"></span>
+        <h3>협업과 커뮤니케이션</h3>
+        <p>「우주라이크」를 운영하며 고객인 식당 점주들과 직접 소통하고 서비스에 대한 의견과 피드백을 적극적으로 반영했습니다.</p>
+        <p>항상 유저의 시각에서 고민하고 실제 사용자의 경험을 기준으로 서비스를 개선하는 것을 중요하게 생각합니다.</p>
+        <a href="#projects">프로젝트 보기</a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- 프로젝트 목록 -->
+<section class="section" id="projects">
+  <div class="wrap">
+    <h2 class="reveal">Projects</h2>
+    <div class="proj-cards reveal stagger">
+      <article class="proj-card">
+        <div class="proj-card-logo alt">
+          <img src="media/wouldulike_logo.webp" alt="우주라이크 앱 아이콘" width="512" height="512" loading="lazy">
+        </div>
+        <div class="proj-card-body">
+          <h3>우주라이크</h3>
+          <p class="proj-card-role">대학생을 위한 지역 식당 제휴 앱, 개발 인원 3명</p>
+          <p>경북대학교 인근 음식점과 제휴해 학생들에게 쿠폰과 적립형 스탬프를 제공하는 서비스입니다. 서비스 기획과 UX, UI 디자인을 맡고 프론트엔드 개발에 참여했습니다.</p>
+          <p class="muted">App Store, Google Play 출시</p>
+          <a href="#wouldulike">자세히 보기</a>
+        </div>
+      </article>
+
+      <article class="proj-card">
+        <div class="proj-card-logo">
+          <img src="media/app_icon.webp" alt="지구특공대 앱 아이콘" width="512" height="512" loading="lazy">
+        </div>
+        <div class="proj-card-body">
+          <h3>지구특공대</h3>
+          <p class="proj-card-role">모바일 로그라이크 생존 게임(출시 예정작), 개발 인원 1명</p>
+          <p>게임 기획부터 Unity 개발, UX와 UI, 에셋 제작까지 전 과정을 직접 진행하고 있습니다. 2026년 9월 출시 예정입니다.</p>
+          <a href="#project">자세히 보기</a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- 우주라이크 상세 -->
+<section class="section" id="wouldulike">
+  <div class="wrap wrap-wide">
+    <h2 class="reveal">우주라이크</h2>
+    <p class="lead reveal">대학생을 위한 지역 식당 제휴 앱입니다. 경북대학교 인근 음식점과 제휴해 학생들에게 쿠폰과 적립형 스탬프를 제공하는 서비스입니다.</p>
+
+    <dl class="proj-meta light reveal stagger">
+      <div><dt>Role</dt><dd>서비스 기획, UX와 UI 디자인, 프론트엔드 개발 참여 (3인 팀)</dd></div>
+      <div><dt>Result</dt><dd>제휴 매장 25곳 중 <b class="num">15곳 유료 전환 (전환율 60%)</b>, 경북대학교 재학생 다운로드 <b class="num">1,000회 이상</b></dd></div>
+      <div><dt>개발 인원</dt><dd>3명</dd></div>
+      <div><dt>기술</dt><dd>Flutter, Dart, 카카오와 Apple 로그인 SDK, Firebase 분석과 푸시 알림, REST API 연동</dd></div>
+      <div><dt>백엔드</dt><dd>Django, PostgreSQL, Redis (팀원 담당)</dd></div>
+      <div><dt>플랫폼</dt><dd>iOS와 Android, <a class="link-inline" href="https://apps.apple.com/kr/app/wouldulike/id6740640251" target="_blank" rel="noopener">App Store</a>와 <a class="link-inline" href="https://play.google.com/store/apps/details?id=com.coggiri.new1&amp;hl=ko" target="_blank" rel="noopener">Google Play</a> 출시</dd></div>
+    </dl>
+
+    <div class="shots light reveal stagger">
+      <figure><img src="media/wul_intro1.webp" alt="우주라이크 첫 화면. 대학가 맛집 혜택 소개" width="405" height="880" loading="lazy"><figcaption>첫 화면</figcaption></figure>
+      <figure><img src="media/wul_intro2.webp" alt="온보딩 화면. 지금 시작하면 바로 쓸 쿠폰을 준다는 안내" width="405" height="880" loading="lazy"><figcaption>가입 유도</figcaption></figure>
+      <figure><img src="media/wul_pick.webp" alt="첫 식당 고르기 화면. 카테고리와 식당 목록" width="405" height="880" loading="lazy"><figcaption>첫 식당 고르기</figcaption></figure>
+      <figure><img src="media/wul_roulette.webp" alt="쿠폰 룰렛 화면. 첫 쿠폰 당첨 안내" width="405" height="880" loading="lazy"><figcaption>첫 쿠폰 당첨</figcaption></figure>
+      <figure><img src="media/wul_home.webp" alt="우주라이크 홈 화면. 미션 쿠폰 카드와 기획전 배너" width="405" height="880" loading="lazy"><figcaption>홈</figcaption></figure>
+      <figure><img src="media/wul_login.webp" alt="우주라이크 로그인 화면. 카카오와 애플 로그인" width="405" height="880" loading="lazy"><figcaption>로그인</figcaption></figure>
+      <figure><img src="media/wul_stores.webp" alt="제휴 식당 목록. 카테고리 필터와 스탬프 진행도" width="405" height="880" loading="lazy"><figcaption>제휴 식당</figcaption></figure>
+      <figure><img src="media/wul_store.webp" alt="식당 상세 화면. 사진, 전화, 길찾기, 예약 버튼" width="405" height="880" loading="lazy"><figcaption>식당 상세</figcaption></figure>
+      <figure><img src="media/wul_stamp.webp" alt="스탬프 적립 화면. 10칸 중 1칸 적립" width="405" height="880" loading="lazy"><figcaption>스탬프 적립</figcaption></figure>
+      <figure><img src="media/wul_coupon.webp" alt="쿠폰함 화면. 사용 가능한 쿠폰 목록" width="405" height="880" loading="lazy"><figcaption>쿠폰함</figcaption></figure>
+      <figure><img src="media/wul_mileage.webp" alt="마일리지 상점 화면. 식사권 응모" width="405" height="880" loading="lazy"><figcaption>마일리지 상점</figcaption></figure>
+    </div>
+
+
+  </div>
+</section>
+
+<!-- 지구특공대 상세 -->
+<section class="section dark" id="project">
+  <div class="wrap wrap-wide">
+    <h2 class="reveal">지구특공대</h2>
+    <p class="lead reveal">모바일 로그라이크 생존 게임입니다. 몰려오는 적을 자동 사격으로 막고, 웨이브 사이에 무기를 사서 조합을 키웁니다. 게임 기획부터 Unity 개발, UX와 UI, 에셋 제작까지 전 과정을 직접 진행하고 있습니다.</p>
+    <p class="lead reveal">빠르게 프로토타입을 제작하고 플레이 테스트를 반복하며 핵심 재미를 검증하고 개선하는 방식으로 개발하고 있습니다.</p>
+
+    <dl class="proj-meta reveal stagger">
+      <div><dt>Role</dt><dd>Game Design, Unity, C#, UX와 UI, AI Asset Pipeline</dd></div>
+      <div><dt>Status</dt><dd>2026년 9월 출시 예정</dd></div>
+      <div><dt>개발 인원</dt><dd>1명</dd></div>
+      <div><dt>기간</dt><dd>2026년 6월 24일부터</dd></div>
+      <div><dt>플랫폼</dt><dd>모바일 세로 1080x1920, iOS TestFlight 실기기 배포, WebGL</dd></div>
+    </dl>
+
+    <p class="lead reveal proj-clip-label">아래에서 바로 플레이할 수 있습니다. 오른쪽은 20초 플레이 영상과 실제 게임 화면입니다.</p>
+
+    <div class="game-grid reveal">
+      <div class="play-col">
+        <div class="play-frame" id="play">
+          <iframe src="https://itch.io/embed-upload/18875883?color=0f1115"
+                  title="지구특공대 플레이" allow="autoplay; fullscreen"
+                  width="540" height="960" loading="lazy"></iframe>
+        </div>
+        <p class="muted play-note">첫 로딩에 시간이 걸립니다. <a href="https://tlsalsrn1217.itch.io/earth-defense-force" target="_blank" rel="noopener">itch.io에서 크게 보기</a></p>
+      </div>
+
+      <div class="shots">
+        <figure><video src="media/play.mp4" poster="media/shot_battle.webp"
+                       controls muted loop playsinline preload="none"
+                       aria-label="지구특공대 전투 20초"></video><figcaption>전투 20초 (눌러서 재생)</figcaption></figure>
+        <figure><img src="media/shot_battle.webp" alt="전투 화면. 웨이브 2, 적 수십 마리와 자동 사격" width="405" height="720" loading="lazy"><figcaption>전투</figcaption></figure>
+        <figure><img src="media/shot_shop.webp" alt="정비 상점 화면. 무기와 장비 매물 목록" width="405" height="720" loading="lazy"><figcaption>정비 상점</figcaption></figure>
+        <figure><img src="media/shot_home.webp" alt="홈 화면. 요원과 전투력" width="405" height="720" loading="lazy"><figcaption>홈</figcaption></figure>
+        <figure><img src="media/shot_modes.webp" alt="출격 준비 화면. 캠페인, 무한 생존, 보스 격파" width="405" height="720" loading="lazy"><figcaption>모드 선택</figcaption></figure>
+        <figure><img src="media/shot_stage.webp" alt="스테이지 선택 화면. 연구소 A동" width="405" height="720" loading="lazy"><figcaption>스테이지 선택</figcaption></figure>
+        <figure><img src="media/shot_title.webp" alt="타이틀 화면" width="405" height="720" loading="lazy"><figcaption>타이틀</figcaption></figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- 직접 만든 도구 -->
+<section class="section" id="tools">
+  <div class="wrap">
+    <h2 class="reveal">Tools I Built</h2>
+    <p class="lead reveal">코드는 AI 페어 프로그래밍으로 씁니다. 도구가 필요하면 사서 쓰기보다 AI agent로 직접 만들어 씁니다. 손에 맞는 도구가 있으면 같은 시간에 더 많이 시도해볼 수 있기 때문입니다.</p>
+
+    <dl class="spec-grid tools reveal stagger">
+      <div>
+        <dt><a class="link-inline" href="demo/balance_editor.html" target="_blank" rel="noopener">밸런스 편집기</a></dt>
+        <dd>적 체력, 무기 피해량 같은 수치를 브라우저에서 고치면 게임이 읽는 데이터 파일에 바로 저장됩니다. 숫자를 코드에서 찾아 고치던 일이 사라졌습니다. 링크로 열면 게임에 저장하는 기능만 빠진 상태로 실제 화면을 볼 수 있습니다.</dd>
+      </div>
+      <div>
+        <dt>UI 배치 편집기</dt>
+        <dd>화면 요소를 끌어서 배치하고 그 결과를 코드로 내보냅니다. 프리팹 없이 코드로만 UI를 만드는 구조라서 이 도구가 없으면 좌표를 손으로 맞춰야 합니다.</dd>
+      </div>
+      <div>
+        <dt>개발 대시보드</dt>
+        <dd>진행 상황, 리소스 목록, 디자인 시스템, 작업 기록을 한 화면에서 봅니다. Express와 React로 만들고 Claude API를 붙여 요약을 받습니다.</dd>
+      </div>
+      <div>
+        <dt>시안 미리보기 도구 <b class="num">240개 이상</b></dt>
+        <dd>적, 상점, 이펙트, 효과음을 게임에 넣기 전에 HTML 시안으로 먼저 봅니다. 아니다 싶으면 게임을 건드리지 않고 시안에서 끝냅니다. 실제 시안 세 개를 그대로 열어볼 수 있습니다.
+          <span class="demo-links">
+            <a class="link-inline" href="demo/stage_design.html" target="_blank" rel="noopener">스테이지 설계</a>
+            <a class="link-inline" href="demo/weapon_roster.html" target="_blank" rel="noopener">무기 20종 로스터</a>
+            <a class="link-inline" href="demo/enemy_roster.html" target="_blank" rel="noopener">적 변형 시안</a>
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>에셋 생성 스크립트 <b class="num">55개</b></dt>
+        <dd>PixelLab과 ElevenLabs를 MCP로 붙여 도트 스프라이트와 효과음을 일괄 생성합니다. 규칙(크기, 팔레트, 볼륨)은 스크립트에 박아 두고 씁니다.</dd>
+      </div>
+    </dl>
+
+    <p class="cost reveal">AI가 만든 결과를 그대로 쓰지는 않습니다. 무엇을 만들지 정하고, 만드는 방식에 규칙을 세우고, 나온 결과가 재미있는지 직접 플레이해서 판단하는 것이 제 일입니다.</p>
+  </div>
+</section>
+
+
+<!-- 연락처 -->
+<footer class="section" id="contact">
+  <div class="wrap reveal">
+    <h2>Contact</h2>
+    <ul class="link-list reveal stagger">
+      <li><span class="link-label">이메일</span><a href="mailto:tlsalsrn1217@naver.com">tlsalsrn1217@naver.com</a></li>
+      <li><span class="link-label">지구특공대</span><a href="https://tlsalsrn1217.itch.io/earth-defense-force" target="_blank" rel="noopener">itch.io에서 플레이</a></li>
+      <li><span class="link-label">우주라이크</span><a href="https://apps.apple.com/kr/app/wouldulike/id6740640251" target="_blank" rel="noopener">App Store</a></li>
+      <li><span class="link-label">우주라이크</span><a href="https://play.google.com/store/apps/details?id=com.coggiri.new1&amp;hl=ko" target="_blank" rel="noopener">Google Play</a></li>
+    </ul>
+    <p class="muted">게임 소스 저장소는 비공개입니다. 요청하시면 전체 코드를 보여드릴 수 있습니다.</p>
+  </div>
+</footer>
+
+<script src="app.js?v=64"></script>
+</body>
+</html>

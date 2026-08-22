@@ -1,0 +1,100 @@
+<meta charset="utf-8"><title>무기 20종 로스터 v2</title>
+<style>
+ :root{--cyan:#2de8ff;--dim:#9ea8c7;--dim2:#6f7a9c;--line:#232a52}
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{background:#05060c;color:#e8ecff;font-family:-apple-system,"Apple SD Gothic Neo",sans-serif;padding:24px 20px 60px}
+ img{image-rendering:pixelated}
+ .wrap{max-width:1400px;margin:0 auto}
+ h2{font-size:24px;margin-bottom:10px}
+ .lead{font-size:15px;line-height:1.85;color:var(--dim);margin-bottom:20px}
+ .lead b{color:var(--cyan)}
+ code{color:#c8d2ff;background:#141a33;padding:1px 6px;border-radius:4px;font-size:13px}
+ .sec{margin-bottom:26px}
+ .sec h3{font-size:18px;margin-bottom:10px}
+ .sec h3 span{font-size:13px;color:var(--dim2);font-weight:400;margin-left:8px}
+ .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+ .card{border:2px solid #2b3260;border-radius:14px;background:#0b0e1c;padding:12px 14px 12px}
+ .hd{display:flex;align-items:baseline;gap:8px}
+ .hd h4{font-size:17px}
+ .hd .g{margin-left:auto;font-size:12px;font-weight:700;border:1px solid currentColor;border-radius:6px;padding:1px 7px}
+ .fixed{font-size:11px;color:#04121a;background:var(--cyan);border-radius:5px;padding:1px 6px;font-weight:700}
+ .art{height:112px;display:grid;place-items:center;border-radius:10px;margin:10px 0 6px;border:1px solid #1c2447;
+       background:radial-gradient(70% 70% at 50% 50%,#151c3c,#080b18)}
+ .art img{width:224px;height:112px}
+ .mz{font-size:11px;color:var(--dim2)}
+</style>
+<div class="wrap">
+ <h2>무기 20종 로스터 v2 — 구분 강화</h2>
+ <p class="lead">v1에서 같은 계열끼리 구분이 안 됐다. 두 가지를 바꿨다.<br>
+  <b>실루엣</b> 후보 16장 중 알파 마스크 IoU가 가장 낮은(= 가장 안 닮은) 조합을 뽑았다. 눈대중이 아니라 계산으로 골랐다.<br>
+  <b>등급색</b> 발광부만 등급색으로 돌렸다(고급 초록 · 희귀 시안 · 영웅 보라 · 전설 금). 장갑판 금속은 그대로 흰색·회색이라 세계관은 유지된다.</p>
+ <div class="sec"><h3>핸드건 <span>플라즈마 볼트 · 연사 0.13초 · 사거리 5.0m · 공격 18</span></h3>
+      <div class="grid"><div class="card" style="border-color:#8b95bb66">
+          <div class="hd"><h4>볼트 피스톨</h4><span class="fixed">확정본</span><span class="g" style="color:#8b95bb">일반</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_bolt.png"></div>
+          <div class="mz">총구 1.5</div></div><div class="card" style="border-color:#5dffa066">
+          <div class="hd"><h4>트윈 볼트</h4><span class="g" style="color:#5dffa0">고급</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_twinbolt.png"></div>
+          <div class="mz">총구 1.41</div></div><div class="card" style="border-color:#2de8ff66">
+          <div class="hd"><h4>마그넘 코일</h4><span class="g" style="color:#2de8ff">희귀</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_magnum.png"></div>
+          <div class="mz">총구 1.41</div></div></div></div><div class="sec"><h3>돌격소총 <span>플라즈마 볼트 · 연사 0.18초 · 사거리 5.5m · 공격 24</span></h3>
+      <div class="grid"><div class="card" style="border-color:#8b95bb66">
+          <div class="hd"><h4>가디스 소총</h4><span class="fixed">확정본</span><span class="g" style="color:#8b95bb">일반</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_legacy.png"></div>
+          <div class="mz">총구 1.94</div></div><div class="card" style="border-color:#5dffa066">
+          <div class="hd"><h4>벌컨 카빈</h4><span class="g" style="color:#5dffa0">고급</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_vulcan.png"></div>
+          <div class="mz">총구 2.0</div></div><div class="card" style="border-color:#2de8ff66">
+          <div class="hd"><h4>스톰 라이플</h4><span class="g" style="color:#2de8ff">희귀</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_stormrifle.png"></div>
+          <div class="mz">총구 2.0</div></div></div></div><div class="sec"><h3>샷건 <span>펠릿 확산 · 연사 0.55초 · 사거리 3.0m · 공격 9 x5</span></h3>
+      <div class="grid"><div class="card" style="border-color:#8b95bb66">
+          <div class="hd"><h4>더블 배럴</h4><span class="g" style="color:#8b95bb">일반</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_double.png"></div>
+          <div class="mz">총구 1.78</div></div><div class="card" style="border-color:#5dffa066">
+          <div class="hd"><h4>스캐터 브레이커</h4><span class="fixed">확정본</span><span class="g" style="color:#5dffa0">고급</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_scatter.png"></div>
+          <div class="mz">총구 2.0</div></div><div class="card" style="border-color:#b06bff66">
+          <div class="hd"><h4>스톰브링어</h4><span class="g" style="color:#b06bff">영웅</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_stormbringer.png"></div>
+          <div class="mz">총구 2.0</div></div></div></div><div class="sec"><h3>미니건 <span>예광탄 · 연사 0.06초 · 사거리 4.0m · 공격 7</span></h3>
+      <div class="grid"><div class="card" style="border-color:#5dffa066">
+          <div class="hd"><h4>버즈소</h4><span class="g" style="color:#5dffa0">고급</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_buzzsaw.png"></div>
+          <div class="mz">총구 2.0</div></div><div class="card" style="border-color:#2de8ff66">
+          <div class="hd"><h4>헤일스톰 리피터</h4><span class="fixed">확정본</span><span class="g" style="color:#2de8ff">희귀</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_repeater.png"></div>
+          <div class="mz">총구 1.87</div></div><div class="card" style="border-color:#b06bff66">
+          <div class="hd"><h4>사이클론</h4><span class="g" style="color:#b06bff">영웅</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_cyclone.png"></div>
+          <div class="mz">총구 2.0</div></div></div></div><div class="sec"><h3>저격총 <span>관통 슬러그 · 연사 0.85초 · 사거리 8.5m · 공격 62</span></h3>
+      <div class="grid"><div class="card" style="border-color:#5dffa066">
+          <div class="hd"><h4>롱샷 Mk.2</h4><span class="g" style="color:#5dffa0">고급</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_longshot.png"></div>
+          <div class="mz">총구 2.0</div></div><div class="card" style="border-color:#2de8ff66">
+          <div class="hd"><h4>레일 랜스</h4><span class="fixed">확정본</span><span class="g" style="color:#2de8ff">희귀</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_rail.png"></div>
+          <div class="mz">총구 2.0</div></div><div class="card" style="border-color:#ffe23d66">
+          <div class="hd"><h4>아누비스 레일</h4><span class="g" style="color:#ffe23d">전설</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_anubis.png"></div>
+          <div class="mz">총구 2.0</div></div></div></div><div class="sec"><h3>로켓런처 <span>로켓 폭발 · 연사 1.10초 · 사거리 6.0m · 공격 88+44</span></h3>
+      <div class="grid"><div class="card" style="border-color:#2de8ff66">
+          <div class="hd"><h4>미니 런처</h4><span class="g" style="color:#2de8ff">희귀</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_minilauncher.png"></div>
+          <div class="mz">총구 2.0</div></div><div class="card" style="border-color:#b06bff66">
+          <div class="hd"><h4>인페르노 런처</h4><span class="fixed">확정본</span><span class="g" style="color:#b06bff">영웅</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_inferno.png"></div>
+          <div class="mz">총구 2.0</div></div><div class="card" style="border-color:#ffe23d66">
+          <div class="hd"><h4>헬파이어</h4><span class="g" style="color:#ffe23d">전설</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_hellfire.png"></div>
+          <div class="mz">총구 2.0</div></div></div></div><div class="sec"><h3>레이저건 <span>연속 빔 · 연사 지속 · 사거리 5.5m · 공격 초당 40</span></h3>
+      <div class="grid"><div class="card" style="border-color:#2de8ff66">
+          <div class="hd"><h4>아크라이트</h4><span class="g" style="color:#2de8ff">희귀</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_arclight.png"></div>
+          <div class="mz">총구 2.0</div></div><div class="card" style="border-color:#b06bff66">
+          <div class="hd"><h4>프리즘 레이저</h4><span class="fixed">확정본</span><span class="g" style="color:#b06bff">영웅</span></div>
+          <div class="art"><img src="gen_roster/weapon_gun_marksman.png"></div>
+          <div class="mz">총구 1.81</div></div></div></div>
+ <p class="lead">교체할 칸은 이름으로 말해라. 승인하면 <code>EquipCatalog</code> 13종 추가 + <code>WeaponDef</code> 20종 확장 + 상점 아이콘 자동 생성.</p>
+</div>

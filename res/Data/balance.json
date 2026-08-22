@@ -1,0 +1,960 @@
+{
+ "_note": "데이터 주도 밸런스. 값만 담는다. 변경 이력은 tools/workbench/history/ 를 본다(워크벤치로 저장하면 자동 기록). 의도와 근거는 docs/BALANCE*.md. 게임은 BalanceLoader 가 읽으며 누락 키는 코드 기본값으로 폴백한다. _note 키는 JsonUtility 가 무시한다.",
+ "spawn": {
+  "_note": "뱀서식(2026-07-25): HP/속도 시간 항 제거 — maxHP = baseHpConst*행성difficulty*baseHpDiffScale*hpMul*loopHpMul^루프. 속도 = baseSpeedConst*lerp(1,baseSpeedDiffMax)*speedMul*Enemy.SpeedTune(0.765). 유저 2026-07-31: 몰려올 때 속도 -28%(1.8→1.30) · 잡몹 HP +70%(3.0→5.1) — '몹을 보지도 못하고 죽는다' 대응. 유저 재요청: 여전히 빠름 → 추가 -19%(1.30→1.05). 2026-07-30 클리어 재설계: PhaseCruiser(HP 110배)는 웨이브 테이블에서 제외 — Lv30 빌드가 뚫을 수 없다. 상시 종 HP 천장 = Carrier 20배, Juggernaut(45배)는 min 3~4 elite 악센트로만. 2026-07-31 탕탕특공대 챕터1 실측 반영: 웨이브 min = 5→158 단조 증가(톱니 제거). 원본 영상은 초당 킬이 3.6→17→45→116으로 한 번도 내려가지 않는다 — 중량종 구간에 화면이 비는 톱니가 '학살 판타지'를 끊는다. 바닥 종 = Swarm 고정(후반 적은 HP가 아니라 숫자로 압박), 구간별 쇼케이스 종은 comp 가중치(약 5/min)로 얹는 악센트. 혼합 comp라 EnemySpawner의 탱커 상한 4(elite 14)가 다시 켜져 중량종 폭주를 막는다. 되돌림 = docs/archive/balance.pre-tangtang.json 복사. 2026-07-31 유저: 속도 +10%(1.05→1.155) · HP -30%(5.1→3.57) · 크기 +20%(EnemyArchetype.SizeMul 0.529→0.635). 2026-07-31 2차: HP 추가 -20%(3.57→2.856) · 크기 -15%(0.635→0.540) · 웨이브 min 일괄 ×0.85(밀도 -15%). 2026-08-01 20웨이브 재설계: waves = 30칸 밀도구간에서 20칸 스폰예산(count/dur/cap)으로 교체. min/interval 폐기. 난이도 축 = 웨이브 인덱스(waveHpGrowth/waveDmgGrowth) + 잔존 적 수 실력보정(skillAdj*). 되돌림 = docs/archive/balance.pre-wave20.json 복사. 2026-08-01 유저: 초반이 어렵다 → waves[].hpMul 신설, W1~12에 0.7(HP -30%). 곡선 waveHpGrowth는 그대로 두고 구간만 눌렀다. 2026-08-01 2차: W1~12 count x1.3 / cap x1.25 / speedMul 1.15 (HP -30% 보상), EnemyArchetype.SizeMul 0.5396->0.599(+11%). 2026-08-01 3차: W11 hpMul 0.7->0.56(물량 구간 추가 -20%), 균열 압박 1.3->1.04. 2026-08-01 유저 피드백 4건(웨이브가 길다 / 적이 느려서 루즈하다 / 이벤트 없으면 지루하다 / 과도하게 단단하다) 반영 A+B+F: (A) 중량종 개당 HP 압축 Juggernaut 45->6, Carrier 20->4.5, WingLeader 12->3.5, Bomber 6->3, Sniper/Bulwark/Splitter 3.5/3.5/3->2.5, Brute 3.2->2.6. 근거 = W19 기준 4% 중량종이 웨이브 총 HP의 82%를 먹고 그 15기가 플레이어 속도의 15%로 기어왔다. 대신 comp 비중 4~8%->12%로 올려 '단단한 적은 소~중 물량으로'(유저)를 만든다. 총 HP는 W15 70%, W17 65%, W19 49%로 내려간다. (B) baseSpeedConst 1.155->1.75, waves.speedMul 전 구간 1.15 통일(W13~W20의 1.0 감속 삭제), 중량종 speedMul 하한 0.5. 구 인하 2회는 '몹을 보지도 못하고 죽는다' 대응이었으나 진짜 원인은 전방 스폰 가중과 초반 HP였고 둘 다 이미 수정됐다. 결과 스웜 1.02u/s = 플레이어 2.46의 41%(구 27%). (F) waves.hpMul 램프 평탄화: W11의 0.56 이상치와 W13의 0.7->1.0 절벽(단일 스텝 +57%)을 W10~W14 0.75/0.80/0.85/0.90/0.95로 대체. 되돌림 = docs/archive/balance.pre-feedback.json 복사. 미적용 잔여안 = C(웨이브 dur 단축·상점 2웨이브마다) D(웨이브 내부 서지 3연발) E(균열 조기화·압박 1.35). 2026-08-02 테라 3종 재설계(유저 확정): 보스 제외 상시 몹은 3종뿐이다. Swarm = 고속 약체(hp 0.30 / spd 0.95, 물떼로 밀려온다), Elite = 평균 기본(0.85 / 0.70), Brute = 저속 탱커(4.0 / 0.45, 소~중 물량). 나머지 종(Mid, Lancer, Bulwark, Splitter, Sniper, Bomber, Carrier, Juggernaut, WingLeader, Special)은 데이터에 남지만 웨이브 편성에서 빠졌다. 웨이브 dur 40~90 -> 25~35(보스 90), 전투 총시간 19.0분 -> 11.2분. 초당 스폰 1.6~5.9 -> 2.0~9.8. 보스는 W20 최종보스 하나뿐이다(구 W7/W14 지휘관 폐지). 진화 상자는 ObjectiveDirector가 W7/W14 종료 시 필드에 직접 놓는다. 접촉 피해: Enemy.cs 기준치 6 -> 4, waveDmgGrowth 1.05 -> 1.03(유저 '테라 행성치고 너무 어렵다'). 정비 상점은 2웨이브마다(정지 19회 -> 10회, W19는 최종보스 직전이라 예외로 연다). 되돌림 = docs/archive/balance.pre-feedback.json 복사(단 이 파일은 08-01 A/B/F 이전 상태다). 3종 선정 근거(유저 2026-08-02): 다른 세션이 실제로 그려 배선해둔 최신 아트가 swarm/elite/brute다(Resources 갱신 08-01, mid는 07-23 구 디자인). 그래서 평균 기본몹 자리는 Mid가 아니라 Elite다. Elite는 EnemySpawner.TankerBlocked의 중량종 목록에서도 뺐다. 기본몹이 동시 상한에 걸리면 편성이 통째로 무너진다. 2026-08-02 유저: 적 이동을 등속으로(Enemy.cs 분리 스티어링이 속도에 더해져 겹칠수록 빨라지던 것을 방향만 밀고 속력 고정으로 변경) + 속도 소폭 하향 baseSpeedConst 1.75 -> 1.50. 2026-08-02 유저 2차: 크기 SizeMul 0.599 -> 0.50, 속도 baseSpeedConst 1.50 -> 1.35. 2026-08-02 유저: 평균 적(Elite) speedMul 0.70 -> 0.55 (더 느리게). 2026-08-02 유저: 적 체력 일괄 -15% (baseHpConst 2.856 -> 2.4276). 전 종·전 행성·보스 포함. 2026-08-02 유저: 밀도 -20%(전 웨이브 count/cap/surge x0.8), 고속 적(Swarm)은 W8부터 등장(W1~W7 비중을 Elite로 이관). 런 총 셀 4329 -> 3463. 2026-08-02 유저: 평균몹(Elite) hpMul 0.48 -> 0.384 (-20%), W1~W5 물량 -30%, 상점 물가 -20%(ShopCatalog.PriceMul 0.8 + shop 가격 필드). 런 총 셀 3463 -> 3374. 2026-08-02 유저: 고속몹(Swarm) hpMul 0.48 -> 0.384 (평균몹과 체력 통일 복원, 차이는 속도뿐). 2026-08-02 유저: 20웨이브를 2개씩 묶어 10웨이브로 통합(마지막 전투 웨이브는 구 W17~19 3개 묶음, W10 = 최종보스). 정비 상점은 다시 매 웨이브 종료마다 열린다(9회) — 회차 표기와 기준선 스냅샷이 웨이브 번호와 다시 일치한다. hpMul은 물량 가중 평균, cap은 최댓값, 편성은 물량 가중 혼합. 2026-08-02 유저: 고속몹 사이즈 -20%(EnemyArchetype swarm scale 0.68 -> 0.544), 체력 -15%(0.384 -> 0.3264). 또한 모든 웨이브가 내부 상승 곡선을 가진다 — 밀도 RampLo 0.45에서 RampHi 1.55로 선형 상승, 탱커 가중치는 진행도 x2(초반 거의 0). 둘 다 평균 1이라 웨이브 총 마릿수는 불변. 2026-08-02 유저: 상점 물가 추가 -20%(ShopCatalog.PriceMul 0.8 -> 0.64, shop 가격 필드 x0.8). 신규 스킬은 웨이브 진행도에 따라 Lv1~3으로 등장(UpgradeSystem.NewSkillStartLevel). 2026-08-02 유저: 웨이브 10 -> 15개 재구성(초반 루즈 해소 = W1 밀도 1.2 -> 2.0/s, 후반 난이도 = 웨이브 곡선이 1.1^14까지 늘어 최종 유효 HP 1.6배). 전투 12.3분. 스킬 기본가 46 -> 32. 보스 dmgMul 2.2 -> 1.4, speedMul 0.4 -> 0.28, BossBrain HoverDist 5.5 -> 3.2 / HoverSpeed 2.2 -> 1.4(플레이어 주위를 맴돌게). 2026-08-02 유저: 초반 지루함 대응 = W1~5 물량 +35%·동시상한 +20%, 웨이브 내 램프 0.45~1.55 -> 0.65~1.35(첫머리 밀도 +44%). 스테이지 상승 체력 = waveHpGrowth 1.1 -> 1.12. 2026-08-02: 초반 물량 상향으로 생긴 W5->W6 밀도 역전 제거(W6~W11 물량/상한 재조정, 밀도 단조 증가 복원). 2026-08-04 스테이지 재설계(유저 3건): (1) 2스테이지 급등 완화 — 급등 원인은 행성배수가 아니라 편성 치환이었다(EnemySpawner.cs 행성1 치환에서 주력 Elite hpMul 0.384 -> Lancer 1.5, 행성배수 1.5와 곱해 주력몹 HP가 A동의 5.9배). 행성 difficulty 1.5->1.25, Lancer hpMul 1.5->0.46 / speedMul 0.85->0.70 / dmgMul 1.4->1.0 / xp 2->1, Sniper hpMul 2.5->0.92 / xp 2->1, planets[연구소 B동].coinPerKill 2->1. 결과 전 몹이 A동 대비 1.15~1.5배로 정렬, 처치당 셀은 A동과 같은 기본 1. (2) 중간 보스 — cmd 웨이브 타입은 코드에 살아 있었으나 테이블에서 빠져 있었다. W5/W10/W15에 지휘관 배치(진화 상자 출처가 지휘관으로 복귀 -> ObjectiveDirector.EvolutionWaves 비움, 상자 2->3개). (3) 런타임 단축 — 15웨이브 735초에서 20웨이브 557초(전투 -24%). 웨이브당 체력 상승 waveHpGrowth 1.12->1.13, hpMul 램프 0.70->0.95, 최종 유효 HP 5.4배->10.2배. 스폰 예산 합 8950->7662(-14%)이나 시간이 더 줄어 밀도는 +13%. 정비 상점 14회->19회 = 빌드 비중 상향. 되돌림 = docs/archive/balance.pre-stage20.json 복사. 2026-08-05 유저: 전 스테이지 난이도 상향 v1(시안 tools/difficulty_up_v1.html 승인) — baseHpDiffScale 9.5->11.0(전 구간 HP +16%, 보스 포함), waveHpGrowth 1.13->1.145, waveDmgGrowth 1.03->1.04, skillAdjMax 1.2->1.3(실력보정 상한). 합산 유효 HP W1 +16% / W10 +29% / W20 +49%, 피해 W20 +20%. 물량(min/cap)·속도·행성배수 불변. 되돌림 = 4키 원복(9.5/1.13/1.03/1.2).",
+  "baseHpConst": 1.94208,
+  "baseHpDiffScale": 9.5,
+  "baseSpeedConst": 1.1475,
+  "baseSpeedDiffMax": 1.05,
+  "maxAlive": 160,
+  "bossMidHpMul": 33.6,
+  "bossFinalHpMul": 78.4,
+  "ringRadiusMul": 1.15,
+  "despawnRadiusMul": 1.35,
+  "sideSpawnCut": 0.18,
+  "refillBatch": 12,
+  "waveHpGrowth": 1.17,
+  "waveDmgGrowth": 1.04,
+  "skillAdjMin": 0.85,
+  "skillAdjMax": 1.2,
+  "skillAdjUp": 1.06,
+  "skillAdjDown": 0.95,
+  "skillAdjLeftoverFrac": 0.3
+ },
+ "waves": [
+  {
+   "id": 1,
+   "type": "normal",
+   "dur": 24,
+   "count": 223,
+   "cap": 41,
+   "surge": 0,
+   "comp": [
+    {
+     "kind": "Elite",
+     "w": 1
+    }
+   ],
+   "hpMul": 0.7,
+   "speedMul": 1.15,
+   "min": 24
+  },
+  {
+   "id": 2,
+   "type": "normal",
+   "dur": 24,
+   "count": 244,
+   "cap": 47,
+   "surge": 0,
+   "comp": [
+    {
+     "kind": "Elite",
+     "w": 0.969
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.031
+    }
+   ],
+   "hpMul": 0.72,
+   "speedMul": 1.15,
+   "min": 28
+  },
+  {
+   "id": 3,
+   "type": "elite",
+   "dur": 24,
+   "count": 267,
+   "cap": 55,
+   "surge": 0,
+   "comp": [
+    {
+     "kind": "Elite",
+     "w": 0.937
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.063
+    }
+   ],
+   "hpMul": 0.741,
+   "speedMul": 1.15,
+   "min": 33
+  },
+  {
+   "id": 4,
+   "type": "cmd",
+   "dur": 45,
+   "count": 258,
+   "cap": 64,
+   "surge": 0,
+   "comp": [
+    {
+     "kind": "Brute",
+     "w": 0.011
+    },
+    {
+     "kind": "Elite",
+     "w": 0.852
+    },
+    {
+     "kind": "Mid",
+     "w": 0.044
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.093
+    }
+   ],
+   "hpMul": 0.761,
+   "speedMul": 1.15,
+   "min": 29
+  },
+  {
+   "id": 5,
+   "type": "horde",
+   "dur": 24,
+   "count": 321,
+   "cap": 74,
+   "surge": 13,
+   "comp": [
+    {
+     "kind": "Brute",
+     "w": 0.052
+    },
+    {
+     "kind": "Elite",
+     "w": 0.745
+    },
+    {
+     "kind": "Mid",
+     "w": 0.086
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.118
+    }
+   ],
+   "hpMul": 0.781,
+   "speedMul": 1.15,
+   "min": 43
+  },
+  {
+   "id": 6,
+   "type": "normal",
+   "dur": 24,
+   "count": 354,
+   "cap": 86,
+   "surge": 0,
+   "comp": [
+    {
+     "kind": "Brute",
+     "w": 0.089
+    },
+    {
+     "kind": "Elite",
+     "w": 0.646
+    },
+    {
+     "kind": "Mid",
+     "w": 0.124
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.141
+    }
+   ],
+   "hpMul": 0.801,
+   "speedMul": 1.15,
+   "min": 51
+  },
+  {
+   "id": 7,
+   "type": "elite",
+   "dur": 24,
+   "count": 356,
+   "cap": 91,
+   "surge": 0,
+   "comp": [
+    {
+     "kind": "Brute",
+     "w": 0.123
+    },
+    {
+     "kind": "Elite",
+     "w": 0.557
+    },
+    {
+     "kind": "Mid",
+     "w": 0.159
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.161
+    }
+   ],
+   "hpMul": 0.822,
+   "speedMul": 1.15,
+   "min": 54
+  },
+  {
+   "id": 8,
+   "type": "cmd",
+   "dur": 45,
+   "count": 299,
+   "cap": 92,
+   "surge": 0,
+   "comp": [
+    {
+     "kind": "Brute",
+     "w": 0.154
+    },
+    {
+     "kind": "Elite",
+     "w": 0.478
+    },
+    {
+     "kind": "Mid",
+     "w": 0.188
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.181
+    }
+   ],
+   "hpMul": 0.842,
+   "speedMul": 1.15,
+   "min": 41
+  },
+  {
+   "id": 9,
+   "type": "horde",
+   "dur": 26,
+   "count": 405,
+   "cap": 107,
+   "surge": 16,
+   "comp": [
+    {
+     "kind": "Brute",
+     "w": 0.186
+    },
+    {
+     "kind": "Elite",
+     "w": 0.416
+    },
+    {
+     "kind": "Mid",
+     "w": 0.193
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.205
+    }
+   ],
+   "hpMul": 0.863,
+   "speedMul": 1.15,
+   "min": 63
+  },
+  {
+   "id": 10,
+   "type": "normal",
+   "dur": 26,
+   "count": 444,
+   "cap": 122,
+   "surge": 0,
+   "comp": [
+    {
+     "kind": "Brute",
+     "w": 0.198
+    },
+    {
+     "kind": "Elite",
+     "w": 0.367
+    },
+    {
+     "kind": "Mid",
+     "w": 0.198
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.237
+    }
+   ],
+   "hpMul": 0.883,
+   "speedMul": 1.15,
+   "min": 72
+  },
+  {
+   "id": 11,
+   "type": "elite",
+   "dur": 28,
+   "count": 525,
+   "cap": 127,
+   "surge": 0,
+   "comp": [
+    {
+     "kind": "Brute",
+     "w": 0.205
+    },
+    {
+     "kind": "Elite",
+     "w": 0.318
+    },
+    {
+     "kind": "Mid",
+     "w": 0.205
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.272
+    }
+   ],
+   "hpMul": 0.903,
+   "speedMul": 1.15,
+   "min": 84
+  },
+  {
+   "id": 12,
+   "type": "cmd",
+   "dur": 45,
+   "count": 434,
+   "cap": 128,
+   "surge": 0,
+   "comp": [
+    {
+     "kind": "Brute",
+     "w": 0.212
+    },
+    {
+     "kind": "Elite",
+     "w": 0.266
+    },
+    {
+     "kind": "Mid",
+     "w": 0.212
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.31
+    }
+   ],
+   "hpMul": 0.923,
+   "speedMul": 1.15,
+   "min": 74
+  },
+  {
+   "id": 13,
+   "type": "horde",
+   "dur": 30,
+   "count": 677,
+   "cap": 128,
+   "surge": 27,
+   "comp": [
+    {
+     "kind": "Brute",
+     "w": 0.216
+    },
+    {
+     "kind": "Elite",
+     "w": 0.235
+    },
+    {
+     "kind": "Mid",
+     "w": 0.216
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.333
+    }
+   ],
+   "hpMul": 0.944,
+   "speedMul": 1.15,
+   "min": 113
+  },
+  {
+   "id": 14,
+   "type": "boss",
+   "dur": 90,
+   "count": 330,
+   "cap": 60,
+   "surge": 0,
+   "comp": [
+    {
+     "kind": "Brute",
+     "w": 0.216
+    },
+    {
+     "kind": "Elite",
+     "w": 0.235
+    },
+    {
+     "kind": "Mid",
+     "w": 0.216
+    },
+    {
+     "kind": "Swarm",
+     "w": 0.333
+    }
+   ],
+   "hpMul": 1,
+   "speedMul": 1.15,
+   "min": 30
+  }
+ ],
+ "run": {
+  "_note": "클리어 스테이지(2026-07-30 재설계): 15분 = 웨이브 테이블 30칸 소진 = 최종보스 1회 소환, 격파 = TriggerStageClear. bossInterval이 곧 최종보스 소환 시각. minibossInterval 300 = 5분/10분 지휘관 2회 (ObjectiveDirector.MinibossMax) → 진화 상자 2개 = 진화 하드 상한 2. 난이도 축 = 경과 시간(30초/스텝, EnemySpawner.StepSeconds), 플레이어 레벨은 상한 브레이크로만 — 시계만 흐르고 빌드는 약한 구간의 학살 방지. loopHpMul/loopMinMul/apex*(종말 계급)은 15분 안에 발동하지 않는다(P4·향후 엔드리스 모드용으로 보존). milestoneCycleMul/milestoneScoreBase = 구 무한 런 잔재, 미사용.",
+  "bossInterval": 900,
+  "minibossInterval": 300,
+  "milestoneCycleMul": 1.6,
+  "milestoneScoreBase": 1000,
+  "loopHpMul": 1.45,
+  "loopMinMul": 1.25,
+  "apexHpMul": 2.6,
+  "apexDmgMul": 1.3,
+  "apexSpeedMul": 1.55,
+  "apexSpeedCap": 4.6
+ },
+ "duel": {
+  "_note": "하이브리드 결투 모드(2026-07-06 v3): 기본 몹=패턴 없는 물때(직선 추격·약체·대량) + 패턴 몹=동시 상한 내 소수(1.25배 크기·HP/XP 배수·컨트롤 요구). 황금 밸런스 다이얼 = swarmMaxAlive/patternCap/patternChance. enabled=false면 완전 복귀. 적용=행성1 전체.",
+  "enabled": false,
+  "swarmMaxAlive": 34,
+  "swarmTickMul": 1.2,
+  "patternCap": 3,
+  "patternPerStage": 0.5,
+  "patternChance": 0.18,
+  "patternScale": 1.25,
+  "hpMul": 3,
+  "xpMul": 4,
+  "contactDmgMul": 1.35,
+  "surgeScale": 1,
+  "strafeWeight": 0.9,
+  "flipMin": 0.5,
+  "flipMax": 1.4,
+  "dashEveryMin": 2.5,
+  "dashEveryMax": 5.5,
+  "dashRange": 7,
+  "dashWindup": 0.6,
+  "dashSpeed": 8.5,
+  "dashTime": 0.35,
+  "dashRecover": 0.6,
+  "holdDist": 7.5,
+  "fireInterval": 2.4,
+  "windupSlope": 0.03,
+  "fireSlope": 0.12,
+  "ramWindup": 0.9,
+  "ramSpeed": 10,
+  "ramTime": 0.5,
+  "ringCount": 8,
+  "burstShots": 3,
+  "burstGap": 0.22
+ },
+ "growth": {
+  "_note": "성장: 요원 레벨(+2%/Lv, 코인 전용) + 코어스킬 레벨(코인 전용) + 잼 연구 지정. 조각 재화는 2026-08-04 폐기 — 페이싱 다이얼 = shipCoinBase.",
+  "shipLvMax": 10,
+  "shipStatPerLv": 0.02,
+  "shipCoinBase": 2000,
+  "shipCoinGrowth": 1.22,
+  "skillLvMax": 15,
+  "skillPowerPerLv": 0.04,
+  "skillCoinBase": 1400,
+  "skillCoinGrowth": 1.22,
+  "researchGemBase": 12,
+  "researchGemGrowth": 1.06
+ },
+ "enemies": [
+  {
+   "kind": "Swarm",
+   "hpMul": 0.3264,
+   "speedMul": 0.95,
+   "dmgMul": 0.5,
+   "xp": 1,
+   "coin": 0,
+   "score": 1
+  },
+  {
+   "kind": "Mid",
+   "hpMul": 1,
+   "speedMul": 0.7,
+   "dmgMul": 1,
+   "xp": 1,
+   "coin": 0,
+   "score": 2
+  },
+  {
+   "kind": "Brute",
+   "hpMul": 4,
+   "speedMul": 0.45,
+   "dmgMul": 1.4,
+   "xp": 2,
+   "coin": 1,
+   "score": 6
+  },
+  {
+   "kind": "Elite",
+   "hpMul": 0.384,
+   "speedMul": 0.55,
+   "dmgMul": 0.8,
+   "xp": 1,
+   "coin": 1,
+   "score": 2
+  },
+  {
+   "kind": "Special",
+   "hpMul": 3,
+   "speedMul": 0.5,
+   "dmgMul": 1,
+   "xp": 3,
+   "coin": 1,
+   "score": 5
+  },
+  {
+   "kind": "Boss",
+   "hpMul": 1,
+   "speedMul": 0.28,
+   "dmgMul": 1,
+   "xp": 25,
+   "coin": 10,
+   "score": 100
+  },
+  {
+   "kind": "Flagel",
+   "hpMul": 0.4,
+   "speedMul": 0.95,
+   "dmgMul": 0.5,
+   "xp": 1,
+   "coin": 0,
+   "score": 1
+  },
+  {
+   "kind": "Scatter",
+   "hpMul": 2.5,
+   "speedMul": 0.55,
+   "dmgMul": 1,
+   "xp": 3,
+   "coin": 1,
+   "score": 5
+  },
+  {
+   "kind": "Leaper",
+   "hpMul": 1,
+   "speedMul": 0.9,
+   "dmgMul": 0.9,
+   "xp": 2,
+   "coin": 0,
+   "score": 2
+  },
+  {
+   "kind": "Lancer",
+   "hpMul": 0.46,
+   "speedMul": 0.7,
+   "dmgMul": 1,
+   "xp": 1,
+   "coin": 0,
+   "score": 3
+  },
+  {
+   "kind": "Bulwark",
+   "hpMul": 2.5,
+   "speedMul": 0.55,
+   "dmgMul": 1.2,
+   "xp": 2,
+   "coin": 1,
+   "score": 7
+  },
+  {
+   "kind": "Splitter",
+   "hpMul": 2.5,
+   "speedMul": 0.6,
+   "dmgMul": 1,
+   "xp": 2,
+   "coin": 1,
+   "score": 6
+  },
+  {
+   "kind": "Sniper",
+   "hpMul": 0.92,
+   "speedMul": 0.55,
+   "dmgMul": 1,
+   "xp": 1,
+   "coin": 1,
+   "score": 7
+  },
+  {
+   "kind": "Bomber",
+   "hpMul": 3,
+   "speedMul": 0.55,
+   "dmgMul": 1.3,
+   "xp": 3,
+   "coin": 1,
+   "score": 9
+  },
+  {
+   "kind": "Carrier",
+   "hpMul": 4.5,
+   "speedMul": 0.5,
+   "dmgMul": 1.2,
+   "xp": 3,
+   "coin": 2,
+   "score": 16
+  },
+  {
+   "kind": "Juggernaut",
+   "hpMul": 6,
+   "speedMul": 0.5,
+   "dmgMul": 2.4,
+   "xp": 4,
+   "coin": 3,
+   "score": 32
+  },
+  {
+   "kind": "WingLeader",
+   "hpMul": 3.5,
+   "speedMul": 0.9,
+   "dmgMul": 1.3,
+   "xp": 3,
+   "coin": 1,
+   "score": 12
+  },
+  {
+   "kind": "PhaseCruiser",
+   "hpMul": 110,
+   "speedMul": 0.45,
+   "dmgMul": 2,
+   "xp": 18,
+   "coin": 5,
+   "score": 60
+  }
+ ],
+ "planets": [
+  {
+   "name": "연구소 A동",
+   "difficulty": 0.45,
+   "coinPerKill": 1,
+   "unlockScore": 0,
+   "dmgScale": 0.5
+  },
+  {
+   "name": "연구소 B동",
+   "difficulty": 1,
+   "coinPerKill": 1,
+   "unlockScore": 300000,
+   "dmgScale": 1
+  },
+  {
+   "name": "화물 하역장 A동",
+   "difficulty": 1.6,
+   "coinPerKill": 1,
+   "unlockScore": 600000,
+   "dmgScale": 1
+  },
+  {
+   "name": "화물 하역장 B동",
+   "difficulty": 2.3,
+   "coinPerKill": 1,
+   "unlockScore": 900000,
+   "dmgScale": 1
+  },
+  {
+   "name": "도심 봉쇄구역 A구역",
+   "difficulty": 3.1,
+   "coinPerKill": 1,
+   "unlockScore": 1200000,
+   "dmgScale": 1
+  },
+  {
+   "name": "도심 봉쇄구역 B구역",
+   "difficulty": 4,
+   "coinPerKill": 1,
+   "unlockScore": 1500000,
+   "dmgScale": 1
+  }
+ ],
+ "ships": [
+  {
+   "name": "Scout",
+   "maxHP": 55,
+   "moveSpeed": 2.46,
+   "defense": 0.08,
+   "damage": 2,
+   "fireInterval": 0.1625,
+   "bulletCount": 1,
+   "bulletSpeed": 22,
+   "range": 5,
+   "pierce": 0,
+   "gemPrice": 0,
+   "chargeRate": 1
+  },
+  {
+   "name": "Gunner",
+   "maxHP": 63,
+   "moveSpeed": 2.04,
+   "defense": 0.11,
+   "damage": 2,
+   "fireInterval": 0.225,
+   "bulletCount": 3,
+   "bulletSpeed": 20,
+   "range": 4,
+   "pierce": 0,
+   "gemPrice": 500,
+   "chargeRate": 0.8
+  },
+  {
+   "name": "Lancer",
+   "maxHP": 53,
+   "moveSpeed": 2.17,
+   "defense": 0.07,
+   "damage": 3,
+   "fireInterval": 0.3125,
+   "bulletCount": 1,
+   "bulletSpeed": 18,
+   "range": 6,
+   "pierce": 2,
+   "gemPrice": 1200,
+   "chargeRate": 1.25
+  },
+  {
+   "name": "Guardian",
+   "maxHP": 81,
+   "moveSpeed": 1.91,
+   "defense": 0.18,
+   "damage": 2,
+   "fireInterval": 0.275,
+   "bulletCount": 1,
+   "bulletSpeed": 18,
+   "range": 3.5,
+   "pierce": 0,
+   "gemPrice": 500,
+   "chargeRate": 1
+  },
+  {
+   "name": "Nova",
+   "maxHP": 68,
+   "moveSpeed": 2.08,
+   "defense": 0.13,
+   "damage": 2,
+   "fireInterval": 0.25,
+   "bulletCount": 2,
+   "bulletSpeed": 19,
+   "range": 4.5,
+   "pierce": 0,
+   "gemPrice": 1200,
+   "chargeRate": 0.9
+  },
+  {
+   "name": "Phantom",
+   "maxHP": 55,
+   "moveSpeed": 2.55,
+   "defense": 0.09,
+   "damage": 2,
+   "fireInterval": 0.1375,
+   "bulletCount": 1,
+   "bulletSpeed": 24,
+   "range": 5,
+   "pierce": 0,
+   "gemPrice": 1200,
+   "chargeRate": 0.8
+  }
+ ],
+ "weapons": {
+  "_note": "보조무기 드래프트 계수. cd=쿨다운(초). 폼: max(cdMin, cdBase - level*cdSlope). evolved 별도. 2026-07-31 유저: 강화 로켓 쿨 +30%(범위는 코드에서 -62%) · 진화형 쿨 대폭 상향(유도/드론/부메랑). 2026-07-30 무기 만렙 10→8: 레벨 선형 계수(*Slope)를 ×1.25 해서 Lv8 피크 = 구 Lv10 값 유지.",
+  "bombCdBase": 12.5,
+  "bombCdSlope": 0.7688,
+  "bombCdMin": 6.4,
+  "bombCdEvoBase": 13.2,
+  "bombCdEvoMin": 7.2,
+  "bombDmgMul": 5.4,
+  "bombDmgSlope": 11.25,
+  "bombEvoDmgMul": 1.35,
+  "homingCdBase": 2.2,
+  "homingCdSlope": 0.2,
+  "homingCdMin": 0.5,
+  "homingCdEvoBase": 2.6,
+  "homingCdEvoMin": 1.1,
+  "droneCdBase": 0.9,
+  "droneCdSlope": 0.075,
+  "droneCdMin": 0.28,
+  "droneCdEvoBase": 0.95,
+  "droneCdEvoMin": 0.3,
+  "orbitalRadiusBase": 1.35,
+  "orbitalRadiusSlope": 0.1,
+  "orbitalRadiusEvoBonus": 0.35,
+  "boomCdBase": 3.6,
+  "boomCdSlope": 0.1625,
+  "boomCdMin": 2.1,
+  "boomRange": 3,
+  "boomSpeed": 10,
+  "lanceMultMin": 1.6,
+  "lanceMultMax": 8
+ },
+ "economy": {
+  "_note": "경제 페이싱. XP=선형(xpBase+xpStep*(lv-1)). 2026-07-30 클리어 스테이지 재설계: 15분 런 = Lv30 (누적 5,916) — 픽 30개로 무기 1개 만렙+짝기어 = 진화 1~2개. xpStep이 유일한 템포 다이얼(실측 후 여기만 돌린다). xpWallLevel=999 = Lv20 벽 은퇴(30레벨 런에선 드라마가 아니라 끊김) → xpWallAdd/xpStepLate는 사문화. 강화비용=baseCost*(level+1).",
+  "gemRewardFirstClear": 5,
+  "xpBase": 6,
+  "xpStep": 20,
+  "xpWallLevel": 999,
+  "xpWallAdd": 0,
+  "xpStepLate": 3,
+  "gemFloorCap": 200,
+  "cellDropChance": 0.55,
+ "cellDropValueMul": 1.0,
+  "boxLowRandom": 600,
+  "boxLowTarget": 900,
+  "boxMidRandom": 2000,
+  "boxMidTarget": 2800,
+  "boxHighRandom": 350,
+  "boxHighTarget": 500,
+  "moduleBundleCoin": 2800,
+  "moduleBundleCount": 20,
+  "researchBase": 120,
+  "researchGrowth": 1.02,
+  "enhanceBase": 900,
+  "enhanceGrowth": 1.17,
+  "promoteBase": 4500,
+  "promoteGrowth": 1.55,
+  "clearBonusBase": 250,
+  "clearBonusSlope": 35,
+  "clearRepeatFrac": 0.5,
+  "legendaryChance": 0.05,
+  "upgradeCosts": [
+   {
+    "key": "speed",
+    "baseCost": 50
+   },
+   {
+    "key": "accel",
+    "baseCost": 60
+   },
+   {
+    "key": "damage",
+    "baseCost": 60
+   },
+   {
+    "key": "firerate",
+    "baseCost": 60
+   },
+   {
+    "key": "range",
+    "baseCost": 50
+   },
+   {
+    "key": "pierce",
+    "baseCost": 90
+   },
+   {
+    "key": "multishot",
+    "baseCost": 120
+   },
+   {
+    "key": "hp",
+    "baseCost": 60
+   },
+   {
+    "key": "defense",
+    "baseCost": 60
+   },
+   {
+    "key": "regen",
+    "baseCost": 80
+   },
+   {
+    "key": "crit",
+    "baseCost": 80
+   },
+   {
+    "key": "skillpow",
+    "baseCost": 80
+   }
+  ],
+  "roulettePileChance": 0.1,
+  "bossPileChance": 0.3
+ },
+ "account": {
+  "xpBase": 800,
+  "xpExp": 1.5,
+  "maxLevel": 50,
+  "statPerLevel": 0.01,
+  "rewards": [
+   {
+    "lv": 5,
+    "coins": 2000
+   },
+   {
+    "lv": 10,
+    "modules": 30,
+    "gems": 50
+   },
+   {
+    "lv": 15,
+    "coins": 8000
+   },
+   {
+    "lv": 20,
+    "modules": 80,
+    "gems": 80
+   },
+   {
+    "lv": 25,
+    "coins": 20000
+   },
+   {
+    "lv": 30,
+    "modules": 150,
+    "gems": 100
+   },
+   {
+    "lv": 35,
+    "coins": 40000
+   },
+   {
+    "lv": 40,
+    "modules": 250,
+    "gems": 150
+   },
+   {
+    "lv": 45,
+    "coins": 80000
+   },
+   {
+    "lv": 50,
+    "modules": 400,
+    "gems": 300,
+    "coins": 30000
+   }
+  ]
+ },
+ "hyper": {
+  "_note": "하이퍼 스킬(전 슬롯 만렙 이후). 값=비율. 저주는 한 축 감소 + 다섯 축 curseBonus. 획득 임계 = 최근 60초 수입 × targetMinutes, [xpMin,xpMax] 클램프, 직전 임계 ×1.03 이상.",
+  "power": 0.12,
+  "armor": 0.15,
+  "salvage": 0.25,
+  "merit": 0.2,
+  "coolant": 0.08,
+  "curseArmor": 0.18,
+  "curseCoin": 0.28,
+  "curseMerit": 0.25,
+  "curseHeat": 0.09,
+  "curseBonus": 0.07,
+  "curseChance": 0.5,
+  "targetMinutes": 4,
+  "xpMin": 2500,
+  "xpMax": 60000
+ },
+ "shop": {
+  "periodSec": 80,
+  "resumeCountdown": 3,
+  "buffSec": 30,
+  "rerollBase": 4,
+  "rerollStep": 2,
+  "slotWeapon": 5,
+  "slotGear": 4,
+  "slotMax": 6,
+  "slotExpandCost": 22,
+  "sellRatio": 0.5,
+  "itemDupPriceStep": 0.25,
+  "skillBasePrice": 7,
+  "skillBasePriceCannon": 5,
+  "cannonPriceMul": 1.45,
+  "itemOfferMin": 2,
+  "itemOfferMax": 3
+ }
+}

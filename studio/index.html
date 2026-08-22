@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EARTH STUDIO</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="mark" aria-hidden="true"></span>
+    <span class="title">EARTH STUDIO</span>
+    <span class="sub">출격 세팅과 전투 수치를 한 화면에서 바꿔 가며 직접 플레이해 본다</span>
+  </div>
+  <div class="topright">
+    <span id="dirtyBadge" class="badge" hidden>바뀐 값 <b>0</b></span>
+    <button class="ghost sm" id="exportBtn">balance.json 내보내기</button>
+    <button class="ghost sm" id="resetAllBtn">수치 전체 되돌리기</button>
+  </div>
+</header>
+
+<main class="grid">
+
+  <!-- ── 좌: 출격 준비(게임 밖 성장) ─────────────────────────────────── -->
+  <aside class="rail" id="rail" aria-label="출격 준비">
+    <div class="railhead">
+      <h2>출격 준비</h2>
+      <p class="note">게임 밖에서 쌓는 것들이다. 여기를 바꾸면 아래 능력치가 바로 따라 움직이고, 다음 출격부터 적용된다.</p>
+    </div>
+    <div id="railBody"></div>
+    <div class="railfoot">
+      <button class="ghost" id="statBtn">현재 능력치 수치</button>
+      <button class="ghost" id="breakdownBtn">출처 확인</button>
+    </div>
+  </aside>
+
+  <!-- 떠 있는 창 둘. 제목줄을 잡아 끌면 원하는 자리로 옮긴다(가리는 곳을 피하려는 것). -->
+  <div class="pop" id="statPop" style="left: 344px; top: 96px;">
+    <div class="pophead"><h3>현재 능력치 수치</h3><button class="link" data-close>닫기</button></div>
+    <div id="statList" class="statlist"></div>
+  </div>
+  <div class="pop wide" id="srcPop" hidden style="left: 344px; top: 420px;">
+    <div class="pophead"><h3>출처 확인</h3><button class="link" data-close>닫기</button></div>
+    <p class="note">능력치가 어느 단계에서 얼마나 붙었는지 본다. 위에서 아래로 한 겹씩 쌓인 결과다.</p>
+    <div id="srcBody"></div>
+  </div>
+
+  <!-- ── 중앙: 게임 화면 ───────────────────────────────────────────── -->
+  <section class="stagecol">
+    <div class="viewport" id="viewport">
+      <canvas id="stage" width="1080" height="1920"></canvas>
+
+      <div class="hud" id="hud">
+        <div class="hudtop">
+          <div class="hudwave"><b id="hudWave">웨이브 1</b><span id="hudType"></span></div>
+          <div class="hudtimer" id="hudTimer">0:00</div>
+        </div>
+        <div class="hudbars">
+          <div class="bar hp"><i id="hpFill"></i><span id="hpText">100 / 100</span></div>
+          <div class="bar wave"><i id="waveFill"></i></div>
+        </div>
+        <div class="hudcells">
+          <span class="cellico" aria-hidden="true"></span><b id="hudCells">0</b>
+          <span class="hudkill">처치 <b id="hudKills">0</b></span>
+          <span class="huddps">DPS <b id="hudDps">0</b><i id="hudDpsPeak">최고 0</i></span>
+        </div>
+      </div>
+
+      <div class="curtain" id="curtain">
+        <div class="curtaininner">
+          <!-- 첫 화면은 버튼 하나. 결과판은 판이 끝났을 때만 켠다(showCurtain). -->
+          <h3 id="curtainTitle" hidden></h3>
+          <div id="curtainStats" class="resultlist" hidden></div>
+          <div class="resultbtns">
+            <button class="primary" id="reviveBtn" hidden>이어하기</button>
+            <button class="primary" id="curtainBtn">테스트 시작</button>
+          </div>
+          <p class="curtainhint">이동 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="row wrap">
+        <button class="primary" id="startBtn">출격</button>
+        <button class="ghost" id="pauseBtn">일시정지</button>
+        <button class="ghost" id="killBtn">웨이브 즉시 종료</button>
+        <label class="chk"><input type="checkbox" id="godChk"> 무적</label>
+        <label class="chk"><input type="checkbox" id="autoChk"> 자동 이동</label>
+        <label class="chk"><input type="checkbox" id="rangeChk"> 범위 표시</label>
+        <label class="chk"><input type="checkbox" id="propChk" checked> 바닥 소품</label>
+      </div>
+      <div class="row wrap">
+        <label class="slider">진행 속도 <b id="speedNum" class="num">1.0배</b>
+          <input type="range" id="speedRange" min="25" max="400" value="100"></label>
+        <span class="hint">이동 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> · 일시정지 <kbd>Space</kbd> · 상점 열기 <kbd>Tab</kbd></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 우: 런 / 수치 / 경제 ──────────────────────────────────────── -->
+  <aside class="panel">
+    <nav class="tabs" id="tabs">
+      <button class="tab on" data-tab="run">런</button>
+      <button class="tab" data-tab="tune">수치</button>
+      <button class="tab" data-tab="eco">경제</button>
+    </nav>
+    <div class="tabbody" id="tabBody"></div>
+  </aside>
+
+</main>
+
+<!-- 정비 상점 — 웨이브가 끝나면 전투를 얼리고 열린다(게임과 같은 자리) -->
+<div class="modal" id="shop" hidden>
+  <!-- 게임 화면 그대로의 폴더형(유저 승인 2026-08-21, 시안 tools/shop_folder_v2.html C-1):
+       선택 탭이 판과 한 덩어리, 매물 줄은 판보다 어두운 단색 면, 광택은 눌러야 하는 것에만. -->
+  <div class="shopphone">
+    <div class="shophd">
+      <div class="l1">
+        <div class="wv">정비 <b id="shopCycle">0 / 0</b>, 다음 웨이브 <b id="shopNext">1</b></div>
+        <div class="wallet"><span class="cellico" aria-hidden="true"></span><b id="shopCells">0</b></div>
+      </div>
+      <div class="ticks" id="shopTicks"></div>
+    </div>
+    <div class="shoptabs" id="shopTabs">
+      <b data-stab="skill">스킬</b><b data-stab="goods">물자</b>
+    </div>
+    <div class="surface"><div class="scroll" id="shopBody"></div></div>
+    <div class="shopdock" id="shopDock"></div>
+    <div class="cta">
+      <label class="chk allchk"><input type="checkbox" id="shopAll"> 전 항목 보기 (도구 전용)</label>
+      <button id="resumeBtn">출격</button>
+      <div class="shopnote">남은 셀은 다음 정비로 이월된다</div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

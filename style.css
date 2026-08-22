@@ -934,3 +934,23 @@ h2::after {
 .hero-shot::before, .hero-shot::after { animation: none; }
 .proj-card-logo img { animation: none; transition: none; }
 .proj-card:hover .proj-card-logo img { transform: none; }
+
+/* 대표 도구(EARTH STUDIO)는 격자 한 줄을 통째로 쓴다. 나머지 도구와 같은 칸에
+   두면 이 도구가 무엇인지 두 줄로 요약되어 버린다 */
+.tool-lead { grid-column: 1 / -1; }
+.tool-lead dt {
+  font-size: 22px;
+  letter-spacing: -0.2px;
+  color: var(--a1-deep);
+}
+.tool-lead dd { font-size: 16px; }
+/* 네 갈래 쓰임새는 굵은 머리말을 앞에 두고 줄을 나눈다 */
+.tool-points {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0;
+  padding: 14px 16px;
+  background: var(--a1-tint);
+  border-radius: 16px;
+}
+.tool-points b { color: var(--a1-deep); margin-right: 6px; }

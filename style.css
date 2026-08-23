@@ -740,18 +740,6 @@ h2::after {
 .proj-card-logo img { animation: bob 5.5s ease-in-out infinite; }
 .proj-card:nth-child(2) .proj-card-logo img { animation-delay: .8s; }
 
-/* 카드 안 "자세히 보기" 링크. hover하면 화살표가 앞으로 나간다 */
-.strengths a::after, .proj-card-body > a::after {
-  content: "→";
-  display: inline-block;
-  margin-left: 6px;
-  transition: transform 220ms var(--ease);
-}
-.strengths li:hover a::after,
-.proj-card:hover .proj-card-body > a::after,
-.strengths a:hover::after,
-.proj-card-body > a:hover::after { transform: translateX(5px); }
-
 /* 경력 행. 배경만 바뀌던 것에 살짝 밀리는 움직임을 더한다.
    행 자체가 아니라 안쪽 글자를 민다. 행을 밀면 표 왼쪽 선이 흔들린다. */
 .career-when, .career-what { transition: transform 220ms var(--ease); }
@@ -766,9 +754,7 @@ h2::after {
   .js h2.reveal::after, .js h2.reveal.in::after { transform: none; transition: none; }
   .scroll-bar span { transition: none; }
   .toc a.on { transform: none; }
-  .strengths a::after, .proj-card-body > a::after,
   .career-when, .career-what, .link-list a { transition: none; }
-  .strengths li:hover a::after, .proj-card:hover .proj-card-body > a::after,
   .career li:hover .career-when, .career li:hover .career-what,
   .link-list li:hover a { transform: none; }
 }
@@ -1070,25 +1056,98 @@ h2::after {
 }
 .studio-shot figcaption { font-size: 14px; color: var(--text-mute); margin-top: 10px; }
 
-/* 설명은 좌우 두 단. 한 단에 세 항목씩 들어간다 */
-.studio-grid {
+/* 화면을 가운데 두고 설명을 좌우로 세운다. 설명이 화면 위아래로 흩어지면
+   무엇을 가리키는 말인지 눈이 따라가지 못한다 */
+.studio-body {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px 32px;
+  grid-template-columns: 220px minmax(0, 1fr) 220px;
+  gap: 24px;
+  align-items: center;
 }
-.studio-grid > div { padding: 12px 0; border-top: 1px solid var(--border); }
-.studio-grid h4 {
+.studio-col > div { padding: 14px 0; border-top: 1px solid var(--border); }
+.studio-col > div:first-child { border-top: 0; padding-top: 0; }
+.studio-col h4 {
   font-size: 17px;
   font-weight: 700;
   margin: 0 0 4px;
   color: var(--text);
 }
-.studio-grid p { font-size: 15px; color: var(--text-sub); margin: 0; }
+.studio-col p { font-size: 15px; color: var(--text-sub); margin: 0; }
 .studio-cta { margin: 18px 0 0; font-size: 16px; }
 
+@media (max-width: 1000px) {
+  /* 좌우로 세울 폭이 안 나오면 화면을 위로 올리고 설명을 두 단으로 내린다 */
+  .studio-body { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; }
+  .studio-shot { grid-column: 1 / -1; order: -1; margin-bottom: 18px; }
+}
 @media (max-width: 640px) {
   .studio { padding: 22px 20px; }
   .studio-name { font-size: 26px; }
   .studio-lead { font-size: 16px; }
-  .studio-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .studio-body { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* EARTH STUDIO 구간만 더 넓게. 화면 스크린샷이 이 페이지에서 가장 큰 증거물이라
+   본문 폭에 가두면 무엇이 보이는지 읽히지 않는다 */
+.wrap-max { max-width: 1500px; }
+
+/* 스크린샷 위 주석. 빨간 박스와 선이 좌우 설명의 번호와 짝을 이룬다.
+   SVG가 이미지와 같은 좌표계를 쓰므로 화면 폭이 바뀌어도 자리가 어긋나지 않는다 */
+.shot-wrap { position: relative; }
+.shot-marks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.studio-col .pin {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: #E5484D;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 700;
+}
+.studio-col .mark h4 { display: flex; align-items: center; }
+
+/* 개발 중 표시. 제목 옆에 작게 붙인다 */
+.wip {
+  margin-left: 10px;
+  padding: 4px 12px;
+  border-radius: var(--pill);
+  background: var(--a1-tint);
+  color: var(--a1-deep);
+  font-size: 14px;
+  font-weight: 700;
+  vertical-align: 8px;
+}
+
+/* 채운 버튼. 이 카드에서 유일하게 누르라고 만든 자리다 */
+.btn {
+  display: inline-block;
+  padding: 14px 28px;
+  border-radius: var(--pill);
+  background: var(--a1);
+  color: #FFFFFF;
+  font-size: 17px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 220ms var(--ease), background-color 220ms ease-out;
+}
+.btn:hover {
+  background: var(--a1-deep);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+.studio-cta { margin: 24px 0 0; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+  .btn:hover { transform: none; }
 }

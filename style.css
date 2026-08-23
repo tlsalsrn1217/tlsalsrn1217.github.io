@@ -1042,3 +1042,53 @@ h2::after {
   border-radius: 14px;
 }
 .tool-shot figcaption { font-size: 14px; color: var(--text-mute); margin-top: 8px; }
+
+/* ================= EARTH STUDIO 큰 카드 =================
+   도구 목록을 지우고 이 하나만 크게 둔다. 이름은 굵게, 설명은 좌우 두 단으로. */
+.studio {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: 0 1px 2px rgba(44, 32, 128, .08), 0 6px 12px rgba(44, 32, 128, .10), 0 14px 28px rgba(44, 32, 128, .10); /* shadow-ok */
+}
+.studio-name {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  margin-bottom: 10px;
+}
+.studio-name a { color: var(--a1-deep); }
+.studio-lead { font-size: 18px; color: var(--text-sub); margin-bottom: 20px; }
+
+.studio-shot { margin: 0 0 22px; }
+.studio-shot img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.studio-shot figcaption { font-size: 14px; color: var(--text-mute); margin-top: 10px; }
+
+/* 설명은 좌우 두 단. 한 단에 세 항목씩 들어간다 */
+.studio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 32px;
+}
+.studio-grid > div { padding: 12px 0; border-top: 1px solid var(--border); }
+.studio-grid h4 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+.studio-grid p { font-size: 15px; color: var(--text-sub); margin: 0; }
+.studio-cta { margin: 18px 0 0; font-size: 16px; }
+
+@media (max-width: 640px) {
+  .studio { padding: 22px 20px; }
+  .studio-name { font-size: 26px; }
+  .studio-lead { font-size: 16px; }
+  .studio-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+}

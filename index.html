@@ -17,7 +17,7 @@
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <!-- ?v= 는 캐시 무효화용. style.css나 app.js를 고치면 이 숫자를 올린다.
      파일명이 그대로면 브라우저가 옛 파일을 계속 쓴다. -->
-<link rel="stylesheet" href="style.css?v=70">
+<link rel="stylesheet" href="style.css?v=72">
 <!-- 진입 애니메이션은 JS가 살아 있을 때만 건다. 이게 없으면 app.js가 실패했을 때
      .reveal이 opacity:0 그대로 굳어서 본문 대부분이 영영 안 보인다. -->
 <script>document.documentElement.classList.add("js");</script>
@@ -230,7 +230,7 @@
     <div class="game-grid reveal">
       <div class="play-col">
         <div class="play-frame" id="play">
-          <iframe src="https://itch.io/embed-upload/18875883?color=0f1115"
+          <iframe src="https://itch.io/embed-upload/18918052?color=0f1115"
                   title="지구특공대 플레이" allow="autoplay; fullscreen"
                   width="540" height="960" loading="lazy"></iframe>
         </div>
@@ -261,50 +261,46 @@
     <h2 class="reveal">Tools I Built</h2>
     <p class="lead reveal">코드는 AI 페어 프로그래밍으로 씁니다. 도구가 필요하면 사서 쓰기보다 AI agent로 직접 만들어 씁니다. 손에 맞는 도구가 있으면 같은 시간에 더 많이 시도해볼 수 있기 때문입니다.</p>
 
-    <dl class="spec-grid tools reveal stagger">
-      <div class="tool-lead">
-        <dt><a class="link-inline" href="studio/" target="_blank" rel="noopener">EARTH STUDIO</a></dt>
-        <dd>
-          <p>지구특공대를 만들며 쓰는 종합 개발 도구입니다. 게임의 전투 공식을 그대로 옮겨 와서, 수치를 고치고 그 자리에서 플레이해 확인합니다.</p>
-          <p class="tool-keys"><span>스테이지 밸런스</span><span>경제 설계</span><span>성장 설계</span><span>스킬 연출</span></p>
-          <figure class="tool-shot">
-            <a href="studio/" target="_blank" rel="noopener">
-              <img src="media/studio.webp" alt="EARTH STUDIO 화면. 왼쪽 출격 준비, 가운데 게임 화면, 오른쪽 런과 수치, 경제 탭" width="1600" height="723" loading="lazy">
-            </a>
-            <figcaption>왼쪽에서 출격 세팅을 만들고, 가운데서 실제로 싸우고, 오른쪽에서 수치를 만집니다.</figcaption>
-          </figure>
-          <span class="demo-links">
-            <a class="link-inline" href="studio/" target="_blank" rel="noopener">브라우저에서 실행</a>
-          </span>
-        </dd>
+    <article class="studio reveal">
+      <h3 class="studio-name"><a href="studio/" target="_blank" rel="noopener">EARTH STUDIO</a></h3>
+      <p class="studio-lead">지구특공대를 만들며 쓰는 종합 개발 도구입니다. 게임의 전투 공식을 그대로 옮겨 와서, 수치를 고치고 그 자리에서 바로 플레이해 확인합니다.</p>
+
+      <figure class="studio-shot">
+        <a href="studio/" target="_blank" rel="noopener">
+          <img src="media/studio.webp" alt="EARTH STUDIO 화면. 왼쪽 출격 준비, 가운데 게임 화면, 오른쪽 런과 수치, 경제 탭" width="1600" height="723" loading="lazy">
+        </a>
+        <figcaption>왼쪽에서 출격 세팅을 만들고, 가운데서 실제로 싸우고, 오른쪽에서 수치를 만집니다.</figcaption>
+      </figure>
+
+      <div class="studio-grid">
+        <div>
+          <h4>스테이지 밸런스</h4>
+          <p>웨이브 표와 적 18종의 수치를 고치면서 그 웨이브부터 바로 뛰어 확인합니다. 빌드를 다시 뽑을 필요가 없습니다.</p>
+        </div>
+        <div>
+          <h4>경제 설계</h4>
+          <p>웨이브별 수입과 지출, 다음 강화 한 칸의 가격, 누적 지갑을 그래프로 봅니다. 물가를 만지면 즉시 반영됩니다.</p>
+        </div>
+        <div>
+          <h4>성장 설계</h4>
+          <p>장비 등급과 강화, 연구, 파일럿 레벨을 조합해 실제 능력치가 어떻게 변하는지 옆 창에서 바로 읽습니다.</p>
+        </div>
+        <div>
+          <h4>스킬 연출</h4>
+          <p>액티브 스킬 16종과 기어 13종을 슬라이더로 올려 가며 발동 연출과 실제 피해를 함께 확인합니다.</p>
+        </div>
+        <div>
+          <h4>게임과 같은 공식</h4>
+          <p>전투와 성장 공식을 C# 원본에서 한 줄씩 옮겨 왔습니다. 여기서 맞춘 수치가 게임에서 그대로 재현됩니다.</p>
+        </div>
+        <div>
+          <h4>원본은 건드리지 않음</h4>
+          <p>게임 데이터 파일을 직접 읽되 덮어쓰지 않습니다. 편집분은 따로 모아 두고 사람이 확인한 뒤 옮깁니다.</p>
+        </div>
       </div>
-      <div>
-        <dt><a class="link-inline" href="demo/balance_editor.html" target="_blank" rel="noopener">밸런스 편집기</a></dt>
-        <dd>EARTH STUDIO 이전에 쓰던 도구입니다. 수치를 브라우저에서 고쳐 데이터 파일로 내보냅니다. 링크로 열면 게임에 저장하는 기능만 빠진 채 실제 화면이 나옵니다.</dd>
-      </div>
-      <div>
-        <dt>UI 배치 편집기</dt>
-        <dd>화면 요소를 끌어서 배치하고 그 결과를 코드로 내보냅니다. 프리팹 없이 코드로만 UI를 만드는 구조라서 이 도구가 없으면 좌표를 손으로 맞춰야 합니다.</dd>
-      </div>
-      <div>
-        <dt>개발 현황 대시보드</dt>
-        <dd>진행 상황, 리소스 목록, 디자인 시스템, 작업 기록을 한 화면에서 봅니다. Express와 React로 만들고 Claude API를 붙여 요약을 받습니다.</dd>
-      </div>
-      <div>
-        <dt>시안 미리보기 도구 <b class="num">240개 이상</b></dt>
-        <dd>적, 상점, 이펙트, 효과음을 게임에 넣기 전에 HTML 시안으로 먼저 봅니다. 아니다 싶으면 게임을 건드리지 않고 시안에서 끝냅니다. 실제 시안 세 개를 그대로 열어볼 수 있습니다.
-          <span class="demo-links">
-            <a class="link-inline" href="demo/stage_design.html" target="_blank" rel="noopener">스테이지 설계</a>
-            <a class="link-inline" href="demo/weapon_roster.html" target="_blank" rel="noopener">무기 20종 로스터</a>
-            <a class="link-inline" href="demo/enemy_roster.html" target="_blank" rel="noopener">적 변형 시안</a>
-          </span>
-        </dd>
-      </div>
-      <div>
-        <dt>에셋 생성 스크립트 <b class="num">55개</b></dt>
-        <dd>PixelLab과 ElevenLabs를 MCP로 붙여 도트 스프라이트와 효과음을 일괄 생성합니다. 규칙(크기, 팔레트, 볼륨)은 스크립트에 박아 두고 씁니다.</dd>
-      </div>
-    </dl>
+
+      <p class="studio-cta"><a class="link-inline" href="studio/" target="_blank" rel="noopener">브라우저에서 실행</a></p>
+    </article>
 
     <p class="cost reveal">AI가 만든 결과를 그대로 쓰지는 않습니다. 무엇을 만들지 정하고, 만드는 방식에 규칙을 세우고, 나온 결과가 재미있는지 직접 플레이해서 판단하는 것이 제 일입니다.</p>
   </div>
@@ -325,6 +321,6 @@
   </div>
 </footer>
 
-<script src="app.js?v=70"></script>
+<script src="app.js?v=72"></script>
 </body>
 </html>

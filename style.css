@@ -999,3 +999,26 @@ h2::after {
   .case { transition: none; }
   .case:hover { transform: none; }
 }
+
+/* 목차 7칸을 한 줄에 세운다. 줄이 넘어가면 상단 바가 두 줄이 되어
+   본문이 그만큼 밀린다. 폭을 넓히고 알약을 조금 조여서 한 줄에 담는다.
+   그래도 모자라는 좁은 화면에서는 가로로 밀어 본다. */
+.toc {
+  flex-wrap: nowrap;
+  max-width: 1120px;
+  gap: 2px;
+  padding: 8px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.toc::-webkit-scrollbar { display: none; }
+.toc a {
+  white-space: nowrap;
+  padding: 8px 12px;
+  font-size: 15px;
+}
+
+@media (max-width: 640px) {
+  .toc { justify-content: flex-start; padding: 6px 12px; }
+  .toc a { padding: 8px 10px; margin-right: 0; font-size: 14px; }
+}

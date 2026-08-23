@@ -1022,3 +1022,23 @@ h2::after {
   .toc { justify-content: flex-start; padding: 6px 12px; }
   .toc a { padding: 8px 10px; margin-right: 0; font-size: 14px; }
 }
+
+/* EARTH STUDIO 요약 블록. 프로젝트 카드처럼 짧게 읽히도록 둔다 */
+.tool-keys { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 12px; }
+.tool-keys span {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--a1-deep);
+  background: var(--a1-tint);
+  border-radius: var(--pill);
+  padding: 5px 12px;
+}
+.tool-shot { margin: 0 0 10px; }
+.tool-shot img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.tool-shot figcaption { font-size: 14px; color: var(--text-mute); margin-top: 8px; }

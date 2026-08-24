@@ -106,9 +106,6 @@ a:focus-visible {
   color: var(--a1-deep);
   background: var(--a1-tint);
 }
-/* 칩은 같은 보라의 세 단계를 돌려 쓴다 */
-.chip:nth-child(3n+2) { color: var(--a2-deep); background: var(--a2-tint); }
-.chip:nth-child(3n+3) { color: var(--a3-deep); background: var(--a3-tint); }
 
 /* 다크 반전 구간. 게임 화면 전용 */
 .dark {
@@ -264,6 +261,8 @@ a:focus-visible {
 .strengths li:nth-child(4) a { color: var(--a1-deep); }
 .strengths h3 { font-size: 20px; margin-bottom: 12px; }
 .strengths p { color: var(--text-sub); font-size: 16px; margin: 0 0 8px; }
+/* 긴 문단에서 눈이 먼저 닿을 구절. 형광펜은 수치 전용이라 여기선 굵기와 진한 글자색만 쓴다 */
+.strengths p .hi { color: var(--text); font-weight: 700; }
 .strengths a { font-size: 15px; font-weight: 600; margin-top: auto; }
 
 /* 기술 스택 소제목 */

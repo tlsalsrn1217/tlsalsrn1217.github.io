@@ -261,8 +261,6 @@ a:focus-visible {
 .strengths li:nth-child(4) a { color: var(--a1-deep); }
 .strengths h3 { font-size: 20px; margin-bottom: 12px; }
 .strengths p { color: var(--text-sub); font-size: 16px; margin: 0 0 8px; }
-/* 긴 문단에서 눈이 먼저 닿을 구절. 형광펜은 수치 전용이라 여기선 굵기와 진한 글자색만 쓴다 */
-.strengths p .hi { color: var(--text); font-weight: 700; }
 .strengths a { font-size: 15px; font-weight: 600; margin-top: auto; }
 
 /* 기술 스택 소제목 */
